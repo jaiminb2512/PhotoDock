@@ -44,14 +44,7 @@ function AppContent() {
           {/* Public Routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-
-          {/* Protected Routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<HomePage />} />
-          </Route>
-          
-          {/* Catch-all to redirect to Home (Protected) or Login (Public) */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/" element={<HomePage />} />
         </Routes>
       </Box>
     </Box>

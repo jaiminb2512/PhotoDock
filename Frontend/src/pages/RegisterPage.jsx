@@ -6,12 +6,12 @@ import {
     Button,
     TextField,
     Typography,
-    Paper,
     Container,
     Alert,
     CircularProgress,
     InputAdornment,
-    IconButton
+    IconButton,
+    Link as MuiLink
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import authService from '../services/authService';
@@ -45,7 +45,6 @@ const RegisterPage = () => {
 
         try {
             await authService.register({ fullName: data.fullName, emailId: data.email, password: data.password });
-            // Optionally auto-login or redirect to login
             navigate('/login', { state: { message: 'Registration successful! Please login.' } });
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to register. Please try again.');
@@ -61,26 +60,56 @@ const RegisterPage = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#f5f5f5'
+                backgroundColor: '#ffffff',
+                color: '#000000',
+                fontFamily: 'serif'
             }}
         >
             <Container maxWidth="xs">
-                <Paper
-                    elevation={6}
+                <Box
                     sx={{
                         p: 4,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        borderRadius: 2
                     }}
                 >
-                    <Typography component="h1" variant="h4" sx={{ mb: 3, fontWeight: 'bold', color: '#1976d2' }}>
+                    <Typography 
+                        variant="h4" 
+                        sx={{ 
+                            mb: 1, 
+                            fontWeight: 300, 
+                            color: '#000',
+                            fontFamily: 'serif',
+                            letterSpacing: '0.05em'
+                        }}
+                    >
                         Create Account
+                    </Typography>
+                    <Typography 
+                        variant="caption" 
+                        sx={{ 
+                            mb: 4, 
+                            letterSpacing: '0.2em', 
+                            fontSize: '0.7rem',
+                            color: '#666'
+                        }}
+                    >
+                        PHOTODOCK
                     </Typography>
 
                     {error && (
-                        <Alert severity="error" sx={{ width: '100%', mb: 2 }}>
+                        <Alert 
+                            severity="error" 
+                            variant="outlined"
+                            sx={{ 
+                                width: '100%', 
+                                mb: 3, 
+                                borderRadius: 0,
+                                color: '#d32f2f',
+                                border: '1px solid #d32f2f'
+                            }}
+                        >
                             {error}
                         </Alert>
                     )}
@@ -101,11 +130,13 @@ const RegisterPage = () => {
                                     fullWidth
                                     id="fullName"
                                     label="Full Name"
-                                    name="fullName"
-                                    autoComplete="name"
-                                    autoFocus
+                                    variant="standard"
                                     error={!!errors.fullName}
                                     helperText={errors.fullName?.message}
+                                    sx={{ 
+                                        '& .MuiInput-underline:after': { borderBottomColor: '#000' },
+                                        '& .MuiInputLabel-root.Mui-focused': { color: '#000' }
+                                    }}
                                 />
                             )}
                         />
@@ -127,10 +158,13 @@ const RegisterPage = () => {
                                     fullWidth
                                     id="email"
                                     label="Email Address"
-                                    name="email"
-                                    autoComplete="email"
+                                    variant="standard"
                                     error={!!errors.email}
                                     helperText={errors.email?.message}
+                                    sx={{ 
+                                        '& .MuiInput-underline:after': { borderBottomColor: '#000' },
+                                        '& .MuiInputLabel-root.Mui-focused': { color: '#000' }
+                                    }}
                                 />
                             )}
                         />
@@ -150,17 +184,19 @@ const RegisterPage = () => {
                                     margin="normal"
                                     required
                                     fullWidth
-                                    name="password"
                                     label="Password"
                                     type={showPassword ? 'text' : 'password'}
-                                    id="password"
+                                    variant="standard"
                                     error={!!errors.password}
                                     helperText={errors.password?.message}
+                                    sx={{ 
+                                        '& .MuiInput-underline:after': { borderBottomColor: '#000' },
+                                        '& .MuiInputLabel-root.Mui-focused': { color: '#000' }
+                                    }}
                                     InputProps={{
                                         endAdornment: (
                                             <InputAdornment position="end">
                                                 <IconButton
-                                                    aria-label="toggle password visibility"
                                                     onClick={() => setShowPassword(!showPassword)}
                                                     edge="end"
                                                 >
@@ -185,17 +221,19 @@ const RegisterPage = () => {
                                     margin="normal"
                                     required
                                     fullWidth
-                                    name="confirmPassword"
                                     label="Confirm Password"
                                     type={showConfirmPassword ? 'text' : 'password'}
-                                    id="confirmPassword"
+                                    variant="standard"
                                     error={!!errors.confirmPassword}
                                     helperText={errors.confirmPassword?.message}
+                                    sx={{ 
+                                        '& .MuiInput-underline:after': { borderBottomColor: '#000' },
+                                        '& .MuiInputLabel-root.Mui-focused': { color: '#000' }
+                                    }}
                                     InputProps={{
                                         endAdornment: (
                                             <InputAdornment position="end">
                                                 <IconButton
-                                                    aria-label="toggle confirm password visibility"
                                                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                                                     edge="end"
                                                 >
@@ -212,19 +250,50 @@ const RegisterPage = () => {
                             fullWidth
                             variant="contained"
                             disabled={loading}
-                            sx={{ mt: 3, mb: 2, padding: '12px', fontSize: '1rem' }}
+                            sx={{ 
+                                mt: 5, 
+                                mb: 3, 
+                                py: 1.5,
+                                bgcolor: '#000',
+                                color: '#fff',
+                                borderRadius: 0,
+                                fontSize: '0.8rem',
+                                letterSpacing: '0.2em',
+                                '&:hover': { bgcolor: '#333' }
+                            }}
                         >
-                            {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign Up'}
+                            {loading ? <CircularProgress size={24} color="inherit" /> : 'SIGN UP'}
                         </Button>
-                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                            <Link to="/login" style={{ textDecoration: 'none' }}>
-                                <Typography variant="body2" color="primary">
-                                    Already have an account? Sign In
-                                </Typography>
-                            </Link>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                            <MuiLink 
+                                component={Link} 
+                                to="/login" 
+                                sx={{ 
+                                    textDecoration: 'none',
+                                    color: '#666',
+                                    fontSize: '0.8rem',
+                                    '&:hover': { color: '#000' }
+                                }}
+                            >
+                                Already have an account? Sign In
+                            </MuiLink>
+                        </Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                            <MuiLink 
+                                component={Link} 
+                                to="/" 
+                                sx={{ 
+                                    textDecoration: 'none',
+                                    color: '#999',
+                                    fontSize: '0.75rem',
+                                    '&:hover': { color: '#000' }
+                                }}
+                            >
+                                ← Back to Home
+                            </MuiLink>
                         </Box>
                     </Box>
-                </Paper>
+                </Box>
             </Container>
         </Box>
     );
