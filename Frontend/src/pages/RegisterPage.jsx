@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import authService from '../services/authService';
+import colors from '../styles/colors';
 
 const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -60,9 +61,9 @@ const RegisterPage = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#ffffff',
-                color: '#000000',
-                fontFamily: 'serif'
+                backgroundColor: colors.white,
+                color: colors.black,
+                fontFamily: colors.font.serif
             }}
         >
             <Container maxWidth="xs">
@@ -79,8 +80,8 @@ const RegisterPage = () => {
                         sx={{ 
                             mb: 1, 
                             fontWeight: 300, 
-                            color: '#000',
-                            fontFamily: 'serif',
+                            color: colors.black,
+                            fontFamily: colors.font.serif,
                             letterSpacing: '0.05em'
                         }}
                     >
@@ -92,7 +93,7 @@ const RegisterPage = () => {
                             mb: 4, 
                             letterSpacing: '0.2em', 
                             fontSize: '0.7rem',
-                            color: '#666'
+                            color: colors.text.light
                         }}
                     >
                         PHOTODOCK
@@ -134,8 +135,8 @@ const RegisterPage = () => {
                                     error={!!errors.fullName}
                                     helperText={errors.fullName?.message}
                                     sx={{ 
-                                        '& .MuiInput-underline:after': { borderBottomColor: '#000' },
-                                        '& .MuiInputLabel-root.Mui-focused': { color: '#000' }
+                                        '& .MuiInput-underline:after': { borderBottomColor: colors.black },
+                                        '& .MuiInputLabel-root.Mui-focused': { color: colors.black }
                                     }}
                                 />
                             )}
@@ -162,8 +163,8 @@ const RegisterPage = () => {
                                     error={!!errors.email}
                                     helperText={errors.email?.message}
                                     sx={{ 
-                                        '& .MuiInput-underline:after': { borderBottomColor: '#000' },
-                                        '& .MuiInputLabel-root.Mui-focused': { color: '#000' }
+                                        '& .MuiInput-underline:after': { borderBottomColor: colors.black },
+                                        '& .MuiInputLabel-root.Mui-focused': { color: colors.black }
                                     }}
                                 />
                             )}
@@ -190,8 +191,8 @@ const RegisterPage = () => {
                                     error={!!errors.password}
                                     helperText={errors.password?.message}
                                     sx={{ 
-                                        '& .MuiInput-underline:after': { borderBottomColor: '#000' },
-                                        '& .MuiInputLabel-root.Mui-focused': { color: '#000' }
+                                        '& .MuiInput-underline:after': { borderBottomColor: colors.black },
+                                        '& .MuiInputLabel-root.Mui-focused': { color: colors.black }
                                     }}
                                     InputProps={{
                                         endAdornment: (
@@ -254,12 +255,12 @@ const RegisterPage = () => {
                                 mt: 5, 
                                 mb: 3, 
                                 py: 1.5,
-                                bgcolor: '#000',
-                                color: '#fff',
+                                bgcolor: colors.black,
+                                color: colors.white,
                                 borderRadius: 0,
                                 fontSize: '0.8rem',
                                 letterSpacing: '0.2em',
-                                '&:hover': { bgcolor: '#333' }
+                                '&:hover': { bgcolor: colors.text.dark }
                             }}
                         >
                             {loading ? <CircularProgress size={24} color="inherit" /> : 'SIGN UP'}
@@ -270,9 +271,9 @@ const RegisterPage = () => {
                                 to="/login" 
                                 sx={{ 
                                     textDecoration: 'none',
-                                    color: '#666',
+                                    color: colors.text.light,
                                     fontSize: '0.8rem',
-                                    '&:hover': { color: '#000' }
+                                    '&:hover': { color: colors.black }
                                 }}
                             >
                                 Already have an account? Sign In
@@ -284,9 +285,9 @@ const RegisterPage = () => {
                                 to="/" 
                                 sx={{ 
                                     textDecoration: 'none',
-                                    color: '#999',
+                                    color: colors.text.disabled,
                                     fontSize: '0.75rem',
-                                    '&:hover': { color: '#000' }
+                                    '&:hover': { color: colors.black }
                                 }}
                             >
                                 ← Back to Home

@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import colors from '../styles/colors';
 
 const HomePage = () => {
     // Placeholder high-quality photography images
@@ -20,12 +21,12 @@ const HomePage = () => {
     ];
 
     return (
-        <Box sx={{ bgcolor: '#ffffff', minHeight: '100vh', color: '#000000', fontFamily: 'serif' }}>
+        <Box sx={{ bgcolor: colors.white, minHeight: '100vh', color: colors.black, fontFamily: colors.font.serif }}>
             {/* Shared Header */}
             <Header />
 
             <Container maxWidth="md" sx={{ mt: 10, mb: 10, textAlign: 'center' }}>
-                <Typography variant="h3" sx={{ mb: 4, fontWeight: 300, color: '#1a1a1a' }}>
+                <Typography variant="h3" sx={{ mb: 4, fontWeight: 300, color: colors.text.heading }}>
                     Embrace The Journey
                 </Typography>
                 
@@ -33,8 +34,8 @@ const HomePage = () => {
                     <Typography variant="body1" sx={{ 
                         lineHeight: 1.8, 
                         fontSize: '1.1rem', 
-                        color: '#333',
-                        fontFamily: 'serif',
+                        color: colors.text.dark,
+                        fontFamily: colors.font.serif,
                         fontStyle: 'italic'
                     }}>
                         Photographs have always been a powerful way to experience some of the most cherished moments of our lives. They become heirlooms that we pass down from generation to generation. My passion lies in creating photographs that document these moments in an intentional, artful and cinematic way. I often think about how my photos would feel like in someone's hand 15-20 years from now. Are they going to smile or cry when they revisit those moments..? I hope my photography will make much comfort in a way nothing else can....!!!
@@ -42,7 +43,7 @@ const HomePage = () => {
                 </Box>
 
                 <Box sx={{ mb: 6 }}>
-                    <Typography variant="body1" sx={{ color: '#000', fontSize: '1rem' }}>
+                    <Typography variant="body1" sx={{ color: colors.black, fontSize: '1rem' }}>
                         Let us write all the chapters of your beautiful fairy-tale to make it the most memorable phase of your life...
                     </Typography>
                     <Typography variant="h6" sx={{ mt: 2, fontWeight: 400 }}>

@@ -8,6 +8,7 @@ import {
 import { useNavigate, Link } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import authService from '../services/authService';
+import colors from '../styles/colors';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -32,10 +33,10 @@ const Header = () => {
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'space-between',
-            borderBottom: '1px solid rgba(0,0,0,0.05)',
-            bgcolor: '#ffffff',
-            color: '#000000',
-            fontFamily: 'serif'
+            borderBottom: colors.border.light,
+            bgcolor: colors.white,
+            color: colors.black,
+            fontFamily: colors.font.serif
         }}>
             <Box sx={{ display: 'flex', gap: 3 }}>
                 {[
@@ -55,7 +56,7 @@ const Header = () => {
                             color: 'inherit',
                             '&:hover': { opacity: 0.7 },
                             fontWeight: 400,
-                            fontFamily: 'system-ui, -apple-system, sans-serif'
+                            fontFamily: colors.font.sans
                         }}>
                         {item.label}
                     </Typography>
@@ -84,7 +85,7 @@ const Header = () => {
                         component={Link} 
                         to="/login"
                         startIcon={<AccountCircleIcon />} 
-                        sx={{ color: '#000000', fontSize: '0.85rem', textTransform: 'none' }}
+                        sx={{ color: colors.black, fontSize: '0.85rem', textTransform: 'none' }}
                     >
                         Log In
                     </Button>

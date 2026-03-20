@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
+import colors from '../styles/colors';
 
 const Footer = () => {
     return (
@@ -14,14 +15,14 @@ const Footer = () => {
             py: 10, 
             px: 4, 
             textAlign: 'center', 
-            bgcolor: '#ffffff',
-            borderTop: '1px solid rgba(0,0,0,0.05)'
+            bgcolor: colors.white,
+            borderTop: colors.border.light
         }}>
             <Box sx={{ mb: 4 }}>
-                <IconButton sx={{ color: '#000' }}><InstagramIcon /></IconButton>
-                <IconButton sx={{ color: '#000' }}><FacebookIcon /></IconButton>
+                <IconButton sx={{ color: colors.black }}><InstagramIcon /></IconButton>
+                <IconButton sx={{ color: colors.black }}><FacebookIcon /></IconButton>
             </Box>
-            <Typography variant="body2" sx={{ color: '#666', letterSpacing: '0.1em' }}>
+            <Typography variant="body2" sx={{ color: colors.text.light, letterSpacing: '0.1em' }}>
                 © {new Date().getFullYear()} MAULIK DOSHI PHOTOGRAPHY
             </Typography>
             <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', gap: 3 }}>

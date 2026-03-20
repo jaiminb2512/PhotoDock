@@ -15,6 +15,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
+import colors from '../styles/colors';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = [
@@ -116,7 +117,7 @@ const BookOnlinePage = () => {
     };
 
     return (
-        <Box sx={{ bgcolor: '#ffffff', minHeight: '100vh', color: '#000000', fontFamily: 'serif' }}>
+        <Box sx={{ bgcolor: colors.white, minHeight: '100vh', color: colors.black, fontFamily: colors.font.serif }}>
             <Header />
 
             <Box sx={{ position: 'relative' }}>
@@ -127,9 +128,9 @@ const BookOnlinePage = () => {
                         startIcon={<ArrowBackIosNewIcon sx={{ fontSize: '0.7rem !important' }} />}
                         onClick={() => navigate(-1)}
                         sx={{
-                            color: '#4a7c59',
+                            color: colors.accent.primary,
                             textTransform: 'none',
-                            fontFamily: 'system-ui, -apple-system, sans-serif',
+                            fontFamily: colors.font.sans,
                             fontSize: '0.85rem',
                             mb: 3,
                             pl: 0,
@@ -142,16 +143,16 @@ const BookOnlinePage = () => {
                     {/* Title */}
                     <Typography variant="h4" sx={{
                         fontWeight: 300,
-                        fontFamily: 'serif',
-                        color: '#1a1a1a',
+                        fontFamily: colors.font.serif,
+                        color: colors.text.heading,
                         mb: 1
                     }}>
                         Schedule your service
                     </Typography>
                     <Typography variant="body2" sx={{
-                        color: '#555',
+                        color: colors.text.medium,
                         mb: 5,
-                        fontFamily: 'system-ui, -apple-system, sans-serif',
+                        fontFamily: colors.font.sans,
                         fontSize: '0.85rem'
                     }}>
                         Check out our availability and book the date and time that works for you
@@ -162,10 +163,10 @@ const BookOnlinePage = () => {
                         {/* Left: Calendar */}
                         <Grid item xs={12} md={5}>
                             <Typography variant="h6" sx={{
-                                fontFamily: 'serif',
+                                fontFamily: colors.font.serif,
                                 fontWeight: 300,
                                 fontStyle: 'italic',
-                                color: '#333',
+                                color: colors.text.dark,
                                 mb: 3,
                                 fontSize: '1.1rem'
                             }}>
@@ -188,14 +189,14 @@ const BookOnlinePage = () => {
                                     <IconButton
                                         onClick={prevMonth}
                                         size="small"
-                                        sx={{ color: '#333' }}
+                                        sx={{ color: colors.text.dark }}
                                     >
                                         <ChevronLeftIcon />
                                     </IconButton>
                                     <Typography sx={{
                                         fontWeight: 500,
                                         fontSize: '0.95rem',
-                                        fontFamily: 'system-ui, -apple-system, sans-serif',
+                                        fontFamily: colors.font.sans,
                                         minWidth: '140px',
                                         textAlign: 'center'
                                     }}>
@@ -204,7 +205,7 @@ const BookOnlinePage = () => {
                                     <IconButton
                                         onClick={nextMonth}
                                         size="small"
-                                        sx={{ color: '#333' }}
+                                        sx={{ color: colors.text.dark }}
                                     >
                                         <ChevronRightIcon />
                                     </IconButton>
@@ -222,8 +223,8 @@ const BookOnlinePage = () => {
                                             align="center"
                                             sx={{
                                                 fontSize: '0.75rem',
-                                                color: '#888',
-                                                fontFamily: 'system-ui, -apple-system, sans-serif',
+                                                color: colors.text.muted,
+                                                fontFamily: colors.font.sans,
                                                 fontWeight: 500,
                                                 py: 0.5
                                             }}
@@ -253,13 +254,13 @@ const BookOnlinePage = () => {
                                                 borderRadius: '50%',
                                                 cursor: day && !isPast(day) ? 'pointer' : 'default',
                                                 fontSize: '0.85rem',
-                                                fontFamily: 'system-ui, -apple-system, sans-serif',
+                                                fontFamily: colors.font.sans,
                                                 fontWeight: isToday(day) ? 600 : 400,
-                                                color: isPast(day) ? '#ccc' : isSelected(day) ? '#fff' : isToday(day) ? '#4a7c59' : '#333',
-                                                bgcolor: isSelected(day) ? '#5a7d65' : 'transparent',
+                                                color: isPast(day) ? colors.text.faint : isSelected(day) ? colors.white : isToday(day) ? colors.accent.primary : colors.text.dark,
+                                                bgcolor: isSelected(day) ? colors.accent.medium : 'transparent',
                                                 transition: 'all 0.2s ease',
                                                 '&:hover': day && !isPast(day) ? {
-                                                    bgcolor: isSelected(day) ? '#4a6d55' : 'rgba(90, 125, 101, 0.1)',
+                                                    bgcolor: isSelected(day) ? colors.accent.dark : colors.accent.hover,
                                                 } : {}
                                             }}
                                         >
@@ -274,8 +275,8 @@ const BookOnlinePage = () => {
                         <Grid item xs={12} md={4}>
                             <Box sx={{ pt: { xs: 0, md: 0 } }}>
                                 <Typography variant="caption" sx={{
-                                    color: '#8a6e2f',
-                                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                                    color: colors.gold,
+                                    fontFamily: colors.font.sans,
                                     fontSize: '0.75rem',
                                     display: 'block',
                                     mb: 3,
@@ -286,17 +287,17 @@ const BookOnlinePage = () => {
 
                                 <Typography variant="body2" sx={{
                                     fontWeight: 500,
-                                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                                    fontFamily: colors.font.sans,
                                     fontSize: '0.85rem',
-                                    color: '#333',
+                                    color: colors.text.dark,
                                     mb: 0.5
                                 }}>
                                     Availability for {formatSelectedDate()}
                                 </Typography>
                                 <Typography variant="body2" sx={{
-                                    color: '#888',
+                                    color: colors.text.muted,
                                     fontSize: '0.8rem',
-                                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                                    fontFamily: colors.font.sans,
                                     mb: 3
                                 }}>
                                     No availability
@@ -306,19 +307,19 @@ const BookOnlinePage = () => {
                                     variant="contained"
                                     onClick={handleCheckNextAvailability}
                                     sx={{
-                                        bgcolor: '#8c958e',
-                                        color: '#fff',
+                                        bgcolor: colors.button.primary,
+                                        color: colors.white,
                                         borderRadius: 0,
                                         py: 1.2,
                                         px: 4,
                                         fontSize: '0.75rem',
                                         letterSpacing: '0.05em',
                                         textTransform: 'none',
-                                        fontFamily: 'system-ui, -apple-system, sans-serif',
+                                        fontFamily: colors.font.sans,
                                         fontWeight: 500,
                                         boxShadow: 'none',
                                         '&:hover': {
-                                            bgcolor: '#7a837c',
+                                            bgcolor: colors.button.primaryHover,
                                             boxShadow: 'none'
                                         }
                                     }}
@@ -331,10 +332,10 @@ const BookOnlinePage = () => {
                         {/* Right: Service Details */}
                         <Grid item xs={12} md={3}>
                             <Typography variant="h6" sx={{
-                                fontFamily: 'serif',
+                                fontFamily: colors.font.serif,
                                 fontWeight: 300,
                                 fontStyle: 'italic',
-                                color: '#333',
+                                color: colors.text.dark,
                                 mb: 3,
                                 fontSize: '1.1rem'
                             }}>
@@ -342,7 +343,7 @@ const BookOnlinePage = () => {
                             </Typography>
 
                             <Box sx={{
-                                border: '1px solid #e8e8e8',
+                                border: colors.border.section,
                                 borderRadius: 0,
                                 overflow: 'hidden'
                             }}>
@@ -350,7 +351,7 @@ const BookOnlinePage = () => {
                                     <Typography sx={{
                                         fontWeight: 500,
                                         fontSize: '0.9rem',
-                                        fontFamily: 'system-ui, -apple-system, sans-serif',
+                                        fontFamily: colors.font.sans,
                                         mb: 1
                                     }}>
                                         {selectedService.title}
@@ -362,13 +363,13 @@ const BookOnlinePage = () => {
                                             display: 'flex',
                                             alignItems: 'center',
                                             cursor: 'pointer',
-                                            color: '#555',
-                                            '&:hover': { color: '#333' }
+                                            color: colors.text.medium,
+                                            '&:hover': { color: colors.text.dark }
                                         }}
                                     >
                                         <Typography sx={{
                                             fontSize: '0.8rem',
-                                            fontFamily: 'system-ui, -apple-system, sans-serif',
+                                            fontFamily: colors.font.sans,
                                             color: 'inherit'
                                         }}>
                                             More details
@@ -382,20 +383,20 @@ const BookOnlinePage = () => {
                                     </Box>
 
                                     <Collapse in={detailsExpanded}>
-                                        <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #eee' }}>
+                                        <Box sx={{ mt: 2, pt: 2, borderTop: colors.border.subtle }}>
                                             <Typography variant="body2" sx={{
-                                                color: '#666',
+                                                color: colors.text.light,
                                                 fontSize: '0.8rem',
-                                                fontFamily: 'system-ui, -apple-system, sans-serif',
+                                                fontFamily: colors.font.sans,
                                                 lineHeight: 1.6,
                                                 mb: 1
                                             }}>
                                                 <strong>Duration:</strong> {selectedService.duration}
                                             </Typography>
                                             <Typography variant="body2" sx={{
-                                                color: '#666',
+                                                color: colors.text.light,
                                                 fontSize: '0.8rem',
-                                                fontFamily: 'system-ui, -apple-system, sans-serif',
+                                                fontFamily: colors.font.sans,
                                                 lineHeight: 1.6
                                             }}>
                                                 <strong>Price:</strong> {selectedService.price}
@@ -406,7 +407,7 @@ const BookOnlinePage = () => {
 
                                 {/* Service selector */}
                                 <Box sx={{
-                                    borderTop: '1px solid #e8e8e8',
+                                    borderTop: colors.border.section,
                                     p: 1
                                 }}>
                                     {services.map((service) => (
@@ -416,19 +417,19 @@ const BookOnlinePage = () => {
                                             sx={{
                                                 p: 1.5,
                                                 cursor: 'pointer',
-                                                bgcolor: selectedService.id === service.id ? 'rgba(90, 125, 101, 0.06)' : 'transparent',
+                                                bgcolor: selectedService.id === service.id ? colors.accent.subtle : 'transparent',
                                                 borderRadius: '4px',
                                                 transition: 'background-color 0.2s ease',
                                                 '&:hover': {
-                                                    bgcolor: 'rgba(90, 125, 101, 0.1)'
+                                                    bgcolor: colors.accent.hover
                                                 }
                                             }}
                                         >
                                             <Typography sx={{
                                                 fontSize: '0.78rem',
-                                                fontFamily: 'system-ui, -apple-system, sans-serif',
+                                                fontFamily: colors.font.sans,
                                                 fontWeight: selectedService.id === service.id ? 500 : 400,
-                                                color: '#333'
+                                                color: colors.text.dark
                                             }}>
                                                 {service.title}
                                             </Typography>
@@ -437,23 +438,23 @@ const BookOnlinePage = () => {
                                 </Box>
 
                                 {/* Request to Book */}
-                                <Box sx={{ p: 2.5, borderTop: '1px solid #e8e8e8' }}>
+                                <Box sx={{ p: 2.5, borderTop: colors.border.section }}>
                                     <Button
                                         variant="outlined"
                                         fullWidth
                                         sx={{
-                                            borderColor: '#333',
-                                            color: '#333',
+                                            borderColor: colors.button.outlineBorder,
+                                            color: colors.button.outlineBorder,
                                             borderRadius: 0,
                                             py: 1,
                                             fontSize: '0.78rem',
                                             letterSpacing: '0.03em',
                                             textTransform: 'none',
-                                            fontFamily: 'system-ui, -apple-system, sans-serif',
+                                            fontFamily: colors.font.sans,
                                             fontWeight: 500,
                                             '&:hover': {
-                                                borderColor: '#000',
-                                                bgcolor: 'rgba(0,0,0,0.02)'
+                                                borderColor: colors.button.outlineHoverBorder,
+                                                bgcolor: colors.button.outlineHoverBg
                                             }
                                         }}
                                     >

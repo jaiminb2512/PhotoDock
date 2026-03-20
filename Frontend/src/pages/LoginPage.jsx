@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import authService from '../services/authService';
+import colors from '../styles/colors';
 
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -54,9 +55,9 @@ const LoginPage = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#ffffff',
-                color: '#000000',
-                fontFamily: 'serif'
+                backgroundColor: colors.white,
+                color: colors.black,
+                fontFamily: colors.font.serif
             }}
         >
             <Container maxWidth="xs">
@@ -73,8 +74,8 @@ const LoginPage = () => {
                         sx={{ 
                             mb: 1, 
                             fontWeight: 300, 
-                            color: '#000',
-                            fontFamily: 'serif',
+                            color: colors.black,
+                            fontFamily: colors.font.serif,
                             letterSpacing: '0.05em'
                         }}
                     >
@@ -86,7 +87,7 @@ const LoginPage = () => {
                             mb: 4, 
                             letterSpacing: '0.2em', 
                             fontSize: '0.7rem',
-                            color: '#666'
+                            color: colors.text.light
                         }}
                     >
                         PHOTODOCK
@@ -182,12 +183,12 @@ const LoginPage = () => {
                                 mt: 5, 
                                 mb: 3, 
                                 py: 1.5,
-                                bgcolor: '#000',
-                                color: '#fff',
+                                bgcolor: colors.black,
+                                color: colors.white,
                                 borderRadius: 0,
                                 fontSize: '0.8rem',
                                 letterSpacing: '0.2em',
-                                '&:hover': { bgcolor: '#333' }
+                                '&:hover': { bgcolor: colors.text.dark }
                             }}
                         >
                             {loading ? <CircularProgress size={24} color="inherit" /> : 'SIGN IN'}
@@ -198,9 +199,9 @@ const LoginPage = () => {
                                 to="/register" 
                                 sx={{ 
                                     textDecoration: 'none',
-                                    color: '#666',
+                                    color: colors.text.light,
                                     fontSize: '0.8rem',
-                                    '&:hover': { color: '#000' }
+                                    '&:hover': { color: colors.black }
                                 }}
                             >
                                 Don't have an account? Sign Up
@@ -212,9 +213,9 @@ const LoginPage = () => {
                                 to="/" 
                                 sx={{ 
                                     textDecoration: 'none',
-                                    color: '#999',
+                                    color: colors.text.disabled,
                                     fontSize: '0.75rem',
-                                    '&:hover': { color: '#000' }
+                                    '&:hover': { color: colors.black }
                                 }}
                             >
                                 ← Back to Home

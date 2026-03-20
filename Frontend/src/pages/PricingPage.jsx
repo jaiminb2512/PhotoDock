@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import colors from '../styles/colors';
 
 const PricingPage = () => {
     const plans = [
@@ -27,7 +28,7 @@ const PricingPage = () => {
     ];
 
     return (
-        <Box sx={{ bgcolor: '#ffffff', minHeight: '100vh', color: '#000000', fontFamily: 'serif' }}>
+        <Box sx={{ bgcolor: colors.white, minHeight: '100vh', color: colors.black, fontFamily: colors.font.serif }}>
             {/* Header */}
             <Header />
 
@@ -35,9 +36,9 @@ const PricingPage = () => {
                 <Typography variant="h4" sx={{ 
                     mb: 8, 
                     fontWeight: 300, 
-                    color: '#333',
+                    color: colors.text.dark,
                     letterSpacing: '0.05em',
-                    fontFamily: 'serif'
+                    fontFamily: colors.font.serif
                 }}>
                     Choose your pricing plan
                 </Typography>
@@ -46,7 +47,7 @@ const PricingPage = () => {
                     {plans.map((plan, index) => (
                         <Grid item xs={12} md={5} key={index}>
                             <Box sx={{ 
-                                border: '1px solid #e0e0e0',
+                                border: colors.border.card,
                                 p: 6,
                                 height: '100%',
                                 display: 'flex',
@@ -54,23 +55,23 @@ const PricingPage = () => {
                                 alignItems: 'center',
                                 transition: 'all 0.3s ease',
                                 '&:hover': {
-                                    boxShadow: '0 10px 30px rgba(0,0,0,0.05)'
+                                    boxShadow: colors.shadow.cardHover
                                 }
                             }}>
-                                <Typography variant="h5" sx={{ mb: 2, fontWeight: 300, fontFamily: 'serif' }}>
+                                <Typography variant="h5" sx={{ mb: 2, fontWeight: 300, fontFamily: colors.font.serif }}>
                                     {plan.title}
                                 </Typography>
                                 
                                 <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2, mt: 2 }}>
                                     <Typography variant="h6" sx={{ mt: 1, mr: 0.5, fontWeight: 300 }}>₹</Typography>
-                                    <Typography variant="h2" sx={{ fontWeight: 400, fontFamily: 'serif' }}>
+                                    <Typography variant="h2" sx={{ fontWeight: 400, fontFamily: colors.font.serif }}>
                                         {plan.price}
                                     </Typography>
                                 </Box>
 
                                 {plan.description && (
                                     <Typography variant="body2" sx={{ 
-                                        color: '#666', 
+                                        color: colors.text.light, 
                                         lineHeight: 1.6, 
                                         mb: 3,
                                         maxWidth: '300px',
@@ -80,7 +81,7 @@ const PricingPage = () => {
                                     </Typography>
                                 )}
 
-                                <Typography variant="caption" sx={{ color: '#999', mb: 4, fontStyle: 'italic' }}>
+                                <Typography variant="caption" sx={{ color: colors.text.disabled, mb: 4, fontStyle: 'italic' }}>
                                     {plan.validity}
                                 </Typography>
 
@@ -88,13 +89,13 @@ const PricingPage = () => {
                                     variant="contained" 
                                     fullWidth
                                     sx={{ 
-                                        bgcolor: '#8c958e', // Greenish grey from screenshot
-                                        color: '#fff',
+                                        bgcolor: colors.button.primary,
+                                        color: colors.white,
                                         borderRadius: 0,
                                         py: 1.5,
                                         fontSize: '0.8rem',
                                         letterSpacing: '0.1em',
-                                        '&:hover': { bgcolor: '#7a837c' }
+                                        '&:hover': { bgcolor: colors.button.primaryHover }
                                     }}
                                 >
                                     Select
@@ -103,7 +104,7 @@ const PricingPage = () => {
                                 <Divider sx={{ width: '100%', my: 6, opacity: 0.3 }} />
 
                                 <Typography variant="subtitle2" sx={{ 
-                                    color: '#333', 
+                                    color: colors.text.dark, 
                                     fontWeight: 300,
                                     letterSpacing: '0.05em'
                                 }}>

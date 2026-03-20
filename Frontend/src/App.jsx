@@ -10,6 +10,7 @@ import { lightTheme, darkTheme } from './styles/theme'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import authService from './services/authService'
 import './App.css'
+import colors from './styles/colors'
 
 function AppContent() {
   return (
@@ -32,13 +33,13 @@ function AppContent() {
             background: 'transparent',
           },
           '&::-webkit-scrollbar-thumb': {
-            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            backgroundColor: colors.scrollbar.thumb,
             borderRadius: '6px',
             border: '2px solid transparent',
             backgroundClip: 'padding-box',
           },
           '&::-webkit-scrollbar-thumb:hover': {
-            backgroundColor: 'rgba(0, 0, 0, 0.3)',
+            backgroundColor: colors.scrollbar.thumbHover,
           }
         }}
       >
