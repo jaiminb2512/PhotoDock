@@ -4,6 +4,8 @@ import { ThemeProvider, CssBaseline, Box } from '@mui/material'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
 import HomePage from './pages/HomePage.jsx'
+import PricingPage from './pages/PricingPage.jsx'
+import BookOnlinePage from './pages/BookOnlinePage.jsx'
 import { lightTheme, darkTheme } from './styles/theme'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import authService from './services/authService'
@@ -45,6 +47,8 @@ function AppContent() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/" element={<HomePage />} />
+          <Route path="/plans-pricing" element={<PricingPage />} />
+          <Route path="/book-online" element={<BookOnlinePage />} />
         </Routes>
       </Box>
     </Box>
