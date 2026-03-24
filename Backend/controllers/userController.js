@@ -111,6 +111,7 @@ export const login = async (req, res) => {
             userId: user.userId,
             fullName: user.fullName,
             emailId: user.emailId,
+            role: user.role,
             token: token
         };
 
@@ -149,6 +150,7 @@ export const getMe = async (req, res) => {
             userId: user.userId,
             fullName: user.fullName,
             emailId: user.emailId,
+            role: user.role,
             createdAt: user.createdAt
         };
 

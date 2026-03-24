@@ -135,8 +135,11 @@ const RegisterPage = () => {
                                     error={!!errors.fullName}
                                     helperText={errors.fullName?.message}
                                     sx={{ 
+                                        '& .MuiInput-underline:before': { borderBottomColor: colors.border.section },
                                         '& .MuiInput-underline:after': { borderBottomColor: colors.black },
-                                        '& .MuiInputLabel-root.Mui-focused': { color: colors.black }
+                                        '& .MuiInputLabel-root': { color: colors.text.medium },
+                                        '& .MuiInputLabel-root.Mui-focused': { color: colors.black },
+                                        '& .MuiInputBase-input': { color: colors.black }
                                     }}
                                 />
                             )}
@@ -163,8 +166,11 @@ const RegisterPage = () => {
                                     error={!!errors.email}
                                     helperText={errors.email?.message}
                                     sx={{ 
+                                        '& .MuiInput-underline:before': { borderBottomColor: colors.border.section },
                                         '& .MuiInput-underline:after': { borderBottomColor: colors.black },
-                                        '& .MuiInputLabel-root.Mui-focused': { color: colors.black }
+                                        '& .MuiInputLabel-root': { color: colors.text.medium },
+                                        '& .MuiInputLabel-root.Mui-focused': { color: colors.black },
+                                        '& .MuiInputBase-input': { color: colors.black }
                                     }}
                                 />
                             )}
@@ -191,8 +197,11 @@ const RegisterPage = () => {
                                     error={!!errors.password}
                                     helperText={errors.password?.message}
                                     sx={{ 
+                                        '& .MuiInput-underline:before': { borderBottomColor: colors.border.section },
                                         '& .MuiInput-underline:after': { borderBottomColor: colors.black },
-                                        '& .MuiInputLabel-root.Mui-focused': { color: colors.black }
+                                        '& .MuiInputLabel-root': { color: colors.text.medium },
+                                        '& .MuiInputLabel-root.Mui-focused': { color: colors.black },
+                                        '& .MuiInputBase-input': { color: colors.black }
                                     }}
                                     InputProps={{
                                         endAdornment: (
@@ -228,8 +237,11 @@ const RegisterPage = () => {
                                     error={!!errors.confirmPassword}
                                     helperText={errors.confirmPassword?.message}
                                     sx={{ 
-                                        '& .MuiInput-underline:after': { borderBottomColor: '#000' },
-                                        '& .MuiInputLabel-root.Mui-focused': { color: '#000' }
+                                        '& .MuiInput-underline:before': { borderBottomColor: colors.border.section },
+                                        '& .MuiInput-underline:after': { borderBottomColor: colors.black },
+                                        '& .MuiInputLabel-root': { color: colors.text.medium },
+                                        '& .MuiInputLabel-root.Mui-focused': { color: colors.black },
+                                        '& .MuiInputBase-input': { color: colors.black }
                                     }}
                                     InputProps={{
                                         endAdornment: (

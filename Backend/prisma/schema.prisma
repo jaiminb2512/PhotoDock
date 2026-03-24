@@ -7,13 +7,60 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum role {
+  ADMIN
+  USER
+}
+
 model User {
-  userId              String           @id
+  userId              String           @id @default(uuid())
   fullName            String
   emailId             String           @unique
   password            String
+  role                role             @default(USER)
   isDeleted           Boolean          @default(false)
   updatedBy           String?
   updatedAt           DateTime?        @updatedAt
   createdAt           DateTime         @default(now())
+  projectId           String?          @unique
+  project             Project?         @relation(fields: [projectId], references: [projectId])
+}
+
+model Project {
+  projectId           String           @id @default(uuid())
+  projectName         String
+  projectDescription  String
+  updatedAt           DateTime?        @updatedAt
+  createdAt           DateTime         @default(now())
+
+  services            Service[]
+  photos              Photo[]
+  user                User?
+}
+
+model Service {
+  serviceId           String           @id @default(uuid())
+  serviceName         String
+  serviceDescription  String
+  servicePrice        Decimal
+  isDeleted           Boolean          @default(false)
+  updatedBy           String?
+  updatedAt           DateTime?        @updatedAt
+  createdAt           DateTime         @default(now())
+  projectId           String
+  project             Project?         @relation(fields: [projectId], references: [projectId])
+}
+
+model Photo {
+  photoId             String           @id @default(uuid())
+  photoName           String
+  photoDescription    String
+  photoUrl            String
+  sequence            Int
+  updatedBy           String?
+  updatedAt           DateTime?        @updatedAt
+  createdAt           DateTime         @default(now())
+
+  projectId           String
+  project             Project?         @relation(fields: [projectId], references: [projectId])
 }

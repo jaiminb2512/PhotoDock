@@ -1,24 +1,53 @@
-import React from 'react';
-import { 
-    Box, 
-    Typography, 
-    Container, 
-    Grid
+import React, { useState, useEffect } from 'react';
+import {
+    Box,
+    Typography,
+    Container,
+    Grid,
+    CircularProgress
 } from '@mui/material';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import colors from '../styles/colors';
+import photoService from '../services/photoService';
 
 const HomePage = () => {
-    // Placeholder high-quality photography images
-    const photos = [
-        "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?q=80&w=2069&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1519225497282-14ad01974078?q=80&w=1974&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=2070&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?q=80&w=2070&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1520854221256-17451cc331bf?q=80&w=2070&auto=format&fit=crop"
-    ];
+    const [photos, setPhotos] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchPhotos = async () => {
+            try {
+                const data = await photoService.getPhotos();
+                setPhotos(data);
+            } catch (error) {
+                console.error("Error fetching photos:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPhotos();
+    }, []);
+
+    // Helper to determine grid width and height based on masonry pattern (repeat every 6 images)
+    const getGridStyles = (index) => {
+        const patternIdx = index % 6;
+
+        switch (patternIdx) {
+            case 0: // Hero image (1st in every set of 6)
+                return { xs: 12, md: 12, height: { xs: '400px', md: '700px' } };
+            case 1:
+            case 2: // Side-by-side (2nd & 3rd)
+                return { xs: 12, md: 6, height: '500px' };
+            case 3:
+            case 4:
+            case 5: // Three-column (4th, 5th, 6th)
+                return { xs: 12, md: 4, height: '400px' };
+            default:
+                return { xs: 12, md: 12, height: '400px' };
+        }
+    };
 
     return (
         <Box sx={{ bgcolor: colors.white, minHeight: '100vh', color: colors.black, fontFamily: colors.font.serif }}>
@@ -29,11 +58,11 @@ const HomePage = () => {
                 <Typography variant="h3" sx={{ mb: 4, fontWeight: 300, color: colors.text.heading }}>
                     Embrace The Journey
                 </Typography>
-                
+
                 <Box sx={{ maxWidth: '700px', mx: 'auto', mb: 4 }}>
-                    <Typography variant="body1" sx={{ 
-                        lineHeight: 1.8, 
-                        fontSize: '1.1rem', 
+                    <Typography variant="body1" sx={{
+                        lineHeight: 1.8,
+                        fontSize: '1.1rem',
                         color: colors.text.dark,
                         fontFamily: colors.font.serif,
                         fontStyle: 'italic'
@@ -52,71 +81,34 @@ const HomePage = () => {
                 </Box>
             </Container>
 
-            {/* Masonry-style Gallery */}
+            {/* Dynamic Masonry-style Gallery */}
             <Box sx={{ px: { xs: 0, md: 4, lg: 8 }, mb: 10 }}>
-                <Grid container spacing={1}>
-                    {/* Hero Image */}
-                    <Grid item xs={12}>
-                        <Box
-                            component="img"
-                            src={photos[0]}
-                            sx={{
-                                width: '100%',
-                                height: { xs: '400px', md: '700px' },
-                                objectFit: 'cover',
-                                display: 'block'
-                            }}
-                        />
+                {loading ? (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
+                        <CircularProgress color="inherit" />
+                    </Box>
+                ) : (
+                    <Grid container spacing={1}>
+                        {photos.map((photo, index) => {
+                            const styles = getGridStyles(index);
+                            return (
+                                <Grid item xs={styles.xs} md={styles.md} key={photo.photoId || index}>
+                                    <Box
+                                        component="img"
+                                        src={photo.photoUrl}
+                                        alt={photo.photoName}
+                                        sx={{
+                                            width: '100%',
+                                            height: styles.height,
+                                            objectFit: 'cover',
+                                            display: 'block'
+                                        }}
+                                    />
+                                </Grid>
+                            );
+                        })}
                     </Grid>
-                    
-                    {/* Grid items */}
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            component="img"
-                            src={photos[1]}
-                            sx={{
-                                width: '100%',
-                                height: '500px',
-                                objectFit: 'cover',
-                                display: 'block'
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <Box
-                            component="img"
-                            src={photos[2]}
-                            sx={{
-                                width: '100%',
-                                height: '500px',
-                                objectFit: 'cover',
-                                display: 'block'
-                            }}
-                        />
-                    </Grid>
-                    
-                    <Grid item xs={12} md={4}>
-                        <Box
-                            component="img"
-                            src={photos[3]}
-                            sx={{ width: '100%', height: '400px', objectFit: 'cover', display: 'block' }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <Box
-                            component="img"
-                            src={photos[4]}
-                            sx={{ width: '100%', height: '400px', objectFit: 'cover', display: 'block' }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={4}>
-                        <Box
-                            component="img"
-                            src={photos[5]}
-                            sx={{ width: '100%', height: '400px', objectFit: 'cover', display: 'block' }}
-                        />
-                    </Grid>
-                </Grid>
+                )}
             </Box>
 
             <Footer />

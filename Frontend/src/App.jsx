@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ThemeProvider, CssBaseline, Box } from '@mui/material'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
@@ -7,8 +7,8 @@ import HomePage from './pages/HomePage.jsx'
 import PricingPage from './pages/PricingPage.jsx'
 import BookOnlinePage from './pages/BookOnlinePage.jsx'
 import { lightTheme, darkTheme } from './styles/theme'
-import ProtectedRoute from './components/ProtectedRoute.jsx'
 import authService from './services/authService'
+import RoleRoute from './components/RoleRoute.jsx'
 import './App.css'
 import colors from './styles/colors'
 
@@ -50,6 +50,15 @@ function AppContent() {
           <Route path="/" element={<HomePage />} />
           <Route path="/plans-pricing" element={<PricingPage />} />
           <Route path="/book-online" element={<BookOnlinePage />} />
+
+          {/* Protected Area (Accessible to both USER and ADMIN) */}
+          <Route element={<RoleRoute allowedRoles={['USER', 'ADMIN']} />}>
+          </Route>
+
+          {/* Example Admin Area (Accessible to ADMIN only - you can add pages here later) */}
+          <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
+            {/* <Route path="/admin" element={<AdminDashboard />} /> */}
+          </Route>
         </Routes>
       </Box>
     </Box>
@@ -64,7 +73,7 @@ function App() {
     if (token) {
       // Verify token on app load
       authService.verifyToken().catch(() => {
-        // Token invalid, will be handled by ProtectedRoute
+        // Token invalid, will be handled by RoleRoute
         console.log("Token verification failed on app load");
       });
     }

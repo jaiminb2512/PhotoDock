@@ -1,10 +1,14 @@
-import api from '../utils/api';
+import api, { API_ENDPOINTS } from '../utils/api';
 
 const authService = {
     // Register a new user
     register: async (userData) => {
         try {
-            const response = await api.post('/users/register', userData);
+            const response = await api({
+                method: API_ENDPOINTS.REGISTER.method,
+                url: API_ENDPOINTS.REGISTER.endpoint,
+                data: userData
+            });
             return response.data;
         } catch (error) {
             throw error;
@@ -14,7 +18,11 @@ const authService = {
     // Login user
     login: async (credentials) => {
         try {
-            const response = await api.post('/users/login', credentials);
+            const response = await api({
+                method: API_ENDPOINTS.LOGIN.method,
+                url: API_ENDPOINTS.LOGIN.endpoint,
+                data: credentials
+            });
             const { token, ...user } = response.data.data; // Assuming backends sends { success: true, message: "...", data: { token, ...user } }
             
             if (token) {
@@ -52,7 +60,10 @@ const authService = {
                 return { valid: false };
             }
 
-            const response = await api.get('/users/me');
+            const response = await api({
+                method: API_ENDPOINTS.GET_ME.method,
+                url: API_ENDPOINTS.GET_ME.endpoint
+            });
             if (response.status === 200) {
                 // Update user data in storage if it changed
                 const user = response.data.data;

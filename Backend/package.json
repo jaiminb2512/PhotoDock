@@ -34,5 +34,8 @@
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }

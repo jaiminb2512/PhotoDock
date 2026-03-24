@@ -132,8 +132,11 @@ const LoginPage = () => {
                                     error={!!errors.email}
                                     helperText={errors.email?.message}
                                     sx={{ 
-                                        '& .MuiInput-underline:after': { borderBottomColor: '#000' },
-                                        '& .MuiInputLabel-root.Mui-focused': { color: '#000' }
+                                        '& .MuiInput-underline:before': { borderBottomColor: colors.border.section },
+                                        '& .MuiInput-underline:after': { borderBottomColor: colors.black },
+                                        '& .MuiInputLabel-root': { color: colors.text.medium },
+                                        '& .MuiInputLabel-root.Mui-focused': { color: colors.black },
+                                        '& .MuiInputBase-input': { color: colors.black }
                                     }}
                                 />
                             )}
@@ -156,8 +159,10 @@ const LoginPage = () => {
                                     error={!!errors.password}
                                     helperText={errors.password?.message}
                                     sx={{ 
-                                        '& .MuiInput-underline:after': { borderBottomColor: '#000' },
-                                        '& .MuiInputLabel-root.Mui-focused': { color: '#000' }
+                                        '& .MuiInput-underline:before': { borderBottomColor: colors.border.section },
+                                        '& .MuiInput-underline:after': { borderBottomColor: colors.black },
+                                        '& .MuiInputLabel-root': { color: colors.text.medium },
+                                        '& .MuiInputLabel-root.Mui-focused': { color: colors.black }
                                     }}
                                     InputProps={{
                                         endAdornment: (
