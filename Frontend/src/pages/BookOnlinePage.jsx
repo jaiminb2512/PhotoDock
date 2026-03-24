@@ -13,7 +13,6 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import colors from '../styles/colors';
 
@@ -465,10 +464,6 @@ const BookOnlinePage = () => {
                         </Grid>
                     </Grid>
                 </Container>
-            </Box>
-
-            <Box sx={{ mt: 6 }}>
-                <Footer />
             </Box>
         </Box>
     );

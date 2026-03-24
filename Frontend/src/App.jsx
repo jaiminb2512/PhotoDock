@@ -6,6 +6,7 @@ import RegisterPage from './pages/RegisterPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import PricingPage from './pages/PricingPage.jsx'
 import BookOnlinePage from './pages/BookOnlinePage.jsx'
+import AdminDashboard from './pages/AdminDashboard.jsx'
 import { lightTheme, darkTheme } from './styles/theme'
 import authService from './services/authService'
 import RoleRoute from './components/RoleRoute.jsx'
@@ -47,21 +48,25 @@ function AppContent() {
           {/* Public Routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/" element={<HomePage />} />
-          <Route path="/plans-pricing" element={<PricingPage />} />
-          <Route path="/book-online" element={<BookOnlinePage />} />
+          <Route path="/:projectName/plans-pricing" element={<PricingPage />} />
+          <Route path="/:projectName/book-online" element={<BookOnlinePage />} />
+          <Route path="/:projectName" element={<HomePage />} />
 
           {/* Protected Area (Accessible to both USER and ADMIN) */}
-          <Route element={<RoleRoute allowedRoles={['USER', 'ADMIN']} />}>
+          <Route element={<RoleRoute allowedRoles={['USER']} />}>
+            <Route path="/:projectName/user/plans-pricing" element={<PricingPage />} />
+            <Route path="/:projectName/user/book-online" element={<BookOnlinePage />} />
           </Route>
 
           {/* Example Admin Area (Accessible to ADMIN only - you can add pages here later) */}
           <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
-            {/* <Route path="/admin" element={<AdminDashboard />} /> */}
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/plans-pricing" element={<PricingPage />} />
+            <Route path="/admin/book-online" element={<BookOnlinePage />} />
           </Route>
         </Routes>
       </Box>
-    </Box>
+    </Box >
   );
 }
 

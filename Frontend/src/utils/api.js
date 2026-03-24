@@ -17,7 +17,10 @@ export const API_ENDPOINTS = {
     GET_SERVICES: { method: 'GET', endpoint: '/services' },
     CREATE_SERVICE: { method: 'POST', endpoint: '/services' },
     UPDATE_SERVICE: { method: 'PUT', endpoint: '/services' },
-    DELETE_SERVICE: { method: 'DELETE', endpoint: '/services' }
+    DELETE_SERVICE: { method: 'DELETE', endpoint: '/services' },
+
+    // Admin
+    ADMIN_CREATE: { method: 'POST', endpoint: '/projects/admin-create' }
 };
 
 export const getApiUrl = (endpoint) => `${baseURL}${endpoint}`;

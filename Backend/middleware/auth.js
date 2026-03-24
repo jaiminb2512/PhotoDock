@@ -53,7 +53,7 @@ export const verifyAndGetUser = async (req, res) => {
 
         // Return user without password
         const { password, ...userDetails } = user;
-        return userDetails;
+        return { userDetails };
     } catch (error) {
         console.error("Token verification error:", error);
         sendResponse(res, 500, "Authentication failed", { error: error.message });
@@ -112,10 +112,10 @@ export const authenticate = async (req, res, next) => {
     const user = await verifyAndGetUser(req, res);
 
     if (!user) {
-        return; // Response already sent by verifyAndGetUser
+        return;
     }
 
     // Attach user details to request object
-    req.user = user;
+    req.user = user.userDetails;
     next();
 };

@@ -56,7 +56,7 @@ const RoleRoute = ({ allowedRoles }) => {
 
     if (!isAuthorized) {
         // If not authorized for this route, redirect back to home (or a "Not Authorized" page)
-        return <Navigate to="/" replace />;
+        return <Navigate to="/:login" replace />;
     }
 
     // Authorization passed, render the children routes

@@ -106,12 +106,22 @@ export const login = async (req, res) => {
             userId: user.userId
         });
 
+        var project = null;
+        if (user.role == "USER") {
+            project = await prisma.project.findUnique({
+                where: {
+                    projectId: user.projectId
+                }
+            });
+        }
+
         // Return user info and token
         const userData = {
             userId: user.userId,
             fullName: user.fullName,
             emailId: user.emailId,
             role: user.role,
+            projectName: project?.projectName || "",
             token: token
         };
 

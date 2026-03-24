@@ -1,7 +1,7 @@
 import React from 'react';
-import { 
-    Box, 
-    Typography, 
+import {
+    Box,
+    Typography,
     IconButton,
     Link as MuiLink
 } from '@mui/material';
@@ -11,10 +11,10 @@ import colors from '../styles/colors';
 
 const Footer = () => {
     return (
-        <Box component="footer" sx={{ 
-            py: 10, 
-            px: 4, 
-            textAlign: 'center', 
+        <Box component="footer" sx={{
+            py: 10,
+            px: 4,
+            textAlign: 'center',
             bgcolor: colors.white,
             borderTop: colors.border.light
         }}>
@@ -23,7 +23,7 @@ const Footer = () => {
                 <IconButton sx={{ color: colors.black }}><FacebookIcon /></IconButton>
             </Box>
             <Typography variant="body2" sx={{ color: colors.text.light, letterSpacing: '0.1em' }}>
-                © {new Date().getFullYear()} MAULIK DOSHI PHOTOGRAPHY
+                © {new Date().getFullYear()} PHOTODOCK
             </Typography>
             <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', gap: 3 }}>
                 <MuiLink href="#" color="inherit" sx={{ fontSize: '0.75rem', textDecoration: 'none' }}>Privacy Policy</MuiLink>

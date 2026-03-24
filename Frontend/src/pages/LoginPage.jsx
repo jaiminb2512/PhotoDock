@@ -39,8 +39,18 @@ const LoginPage = () => {
         setLoading(true);
 
         try {
-            await authService.login({ emailId: data.email, password: data.password });
-            navigate('/');
+            const response = await authService.login({ emailId: data.email, password: data.password });
+            const user = response.data; // This is the user object from the backend
+
+            if (user.role === 'ADMIN') {
+                navigate('/admin/dashboard');
+            } else if (user.role === 'USER') {
+                // If the backend returns a projectName for the user, use it in the path
+                const projectName = user.projectName || 'default';
+                navigate(`/${projectName}`);
+            } else {
+                navigate('/');
+            }
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to login. Please check your credentials.');
         } finally {

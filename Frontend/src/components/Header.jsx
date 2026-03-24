@@ -40,9 +40,13 @@ const Header = () => {
         }}>
             <Box sx={{ display: 'flex', gap: 3 }}>
                 {[
-                    { label: 'HOME', path: '/' },
-                    { label: 'BOOK ONLINE', path: '/book-online' },
-                    { label: 'Plans & Pricing', path: '/plans-pricing' }
+                    ...(user?.role === 'ADMIN' ? [
+                        { label: 'DASHBOARD', path: '/admin/dashboard' }
+                    ] : [
+                        { label: 'HOME', path: `/${user?.projectName || 'default'}` },
+                        { label: 'BOOK ONLINE', path: `/${user?.projectName || 'default'}/book-online` },
+                        { label: 'Plans & Pricing', path: `/${user?.projectName || 'default'}/plans-pricing` }
+                    ])
                 ].map((item) => (
                     <Typography 
                         key={item.label} 

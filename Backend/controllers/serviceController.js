@@ -5,9 +5,17 @@ import { randomUUID } from "crypto";
 // Get all services
 export const getServices = async (req, res) => {
     try {
+        const { projectName } = req.params;
+
+        if (!projectName) {
+            return sendResponse(res, 400, "projectName is required as a parameter");
+        }
+
         const services = await prisma.service.findMany({
             where: {
-                projectId: req.user.projectId
+                project: {
+                    projectName: projectName
+                }
             }
         });
 
@@ -27,7 +35,9 @@ export const createService = async (req, res) => {
             return sendResponse(res, 400, "serviceName and servicePrice are required");
         }
 
-        const id = randomUUID();
+        const id = randomUUID()
+
+        console.log(req.project);
 
         const newService = await prisma.service.create({
             data: {
@@ -35,7 +45,7 @@ export const createService = async (req, res) => {
                 serviceName: serviceName.trim(),
                 serviceDescription: serviceDescription?.trim() || "",
                 servicePrice: servicePrice.toString(),
-                projectId: req.user.projectId
+                projectId: req.project.projectId
             }
         });
 

@@ -19,7 +19,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Header from '../components/Header';
-import Footer from '../components/Footer';
 import colors from '../styles/colors';
 import api, { API_ENDPOINTS } from '../utils/api';
 
@@ -404,8 +403,6 @@ const PricingPage = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-
-            <Footer />
         </Box>
     );
 };
