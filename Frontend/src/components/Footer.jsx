@@ -18,17 +18,17 @@ const Footer = () => {
             bgcolor: colors.white,
             borderTop: colors.border.light
         }}>
-            <Box sx={{ mb: 4 }}>
+            <Box sx={{ mb: 1 }}>
                 <IconButton sx={{ color: colors.black }}><InstagramIcon /></IconButton>
                 <IconButton sx={{ color: colors.black }}><FacebookIcon /></IconButton>
             </Box>
-            <Typography variant="body2" sx={{ color: colors.text.light, letterSpacing: '0.1em' }}>
+            {/* <Typography variant="body2" sx={{ color: colors.text.light, letterSpacing: '0.1em' }}>
                 © {new Date().getFullYear()} PHOTODOCK
             </Typography>
             <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center', gap: 3 }}>
                 <MuiLink href="#" color="inherit" sx={{ fontSize: '0.75rem', textDecoration: 'none' }}>Privacy Policy</MuiLink>
                 <MuiLink href="#" color="inherit" sx={{ fontSize: '0.75rem', textDecoration: 'none' }}>Terms & Conditions</MuiLink>
-            </Box>
+            </Box> */}
         </Box>
     );
 };

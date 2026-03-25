@@ -18,10 +18,10 @@ export const getAllProject = async (req, res) => {
 // Create a new project
 export const createProject = async (req, res) => {
     try {
-        const { projectName, projectDescription } = req.body;
+        const { projectName, projectDescription, displayMessage, tagline, twitterUrl, instagramUrl, facebookUrl } = req.body;
 
-        if (!projectName || !projectDescription) {
-            return sendResponse(res, 400, "projectName and projectDescription are required");
+        if (!projectName || !projectDescription || !displayMessage) {
+            return sendResponse(res, 400, "projectName, projectDescription and displayMessage are required");
         }
 
         const id = randomUUID();
@@ -31,7 +31,12 @@ export const createProject = async (req, res) => {
                 data: {
                     projectId: id,
                     projectName: projectName.trim(),
-                    projectDescription: projectDescription.trim()
+                    projectDescription: projectDescription.trim(),
+                    displayMessage: displayMessage.trim(),
+                    tagline: tagline?.trim() || null,
+                    twitterUrl: twitterUrl?.trim() || null,
+                    instagramUrl: instagramUrl?.trim() || null,
+                    facebookUrl: facebookUrl?.trim() || null
                 }
             });
 
@@ -48,13 +53,18 @@ export const createProject = async (req, res) => {
 // Update existing project details
 export const updateProject = async (req, res) => {
     try {
-        const { projectId, projectName, projectDescription } = req.body;
+        const { projectId, projectName, projectDescription, displayMessage, tagline, twitterUrl, instagramUrl, facebookUrl } = req.body;
 
         const updatedProject = await prisma.project.update({
             where: { projectId: projectId },
             data: {
                 ...(projectName && { projectName: projectName.trim() }),
-                ...(projectDescription && { projectDescription: projectDescription.trim() })
+                ...(projectDescription && { projectDescription: projectDescription.trim() }),
+                ...(displayMessage && { displayMessage: displayMessage.trim() }),
+                ...(tagline !== undefined && { tagline: tagline?.trim() || null }),
+                ...(twitterUrl !== undefined && { twitterUrl: twitterUrl?.trim() || null }),
+                ...(instagramUrl !== undefined && { instagramUrl: instagramUrl?.trim() || null }),
+                ...(facebookUrl !== undefined && { facebookUrl: facebookUrl?.trim() || null })
             }
         });
 
@@ -68,10 +78,10 @@ export const updateProject = async (req, res) => {
 // Admin: Create a new User and their associated Project together
 export const createUserAndProject = async (req, res) => {
     try {
-        const { fullName, emailId, password, projectName, projectDescription } = req.body;
+        const { fullName, emailId, password, projectName, projectDescription, displayMessage, tagline, twitterUrl, instagramUrl, facebookUrl } = req.body;
 
-        if (!fullName || !emailId || !password || !projectName || !projectDescription) {
-            return sendResponse(res, 400, "fullName, emailId, password, projectName, and projectDescription are required");
+        if (!fullName || !emailId || !password || !projectName || !projectDescription || !displayMessage) {
+            return sendResponse(res, 400, "fullName, emailId, password, projectName, projectDescription, and displayMessage are required");
         }
 
         // Check if email already exists
@@ -93,7 +103,12 @@ export const createUserAndProject = async (req, res) => {
                 data: {
                     projectId,
                     projectName: projectName.trim(),
-                    projectDescription: projectDescription.trim()
+                    projectDescription: projectDescription.trim(),
+                    displayMessage: displayMessage.trim(),
+                    tagline: tagline?.trim() || null,
+                    twitterUrl: twitterUrl?.trim() || null,
+                    instagramUrl: instagramUrl?.trim() || null,
+                    facebookUrl: facebookUrl?.trim() || null
                 }
             });
 

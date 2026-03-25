@@ -12,7 +12,9 @@ import {
     Snackbar,
     Alert
 } from '@mui/material';
-import { PersonAdd as PersonAddIcon } from '@mui/icons-material';
+import {
+    PersonAdd as PersonAddIcon
+} from '@mui/icons-material';
 import Header from '../components/Header';
 import colors from '../styles/colors';
 import api, { API_ENDPOINTS, getApiUrl } from '../utils/api';
@@ -24,7 +26,12 @@ const AdminDashboard = () => {
         emailId: '',
         password: '',
         projectName: '',
-        projectDescription: ''
+        projectDescription: '',
+        displayMessage: '',
+        tagline: '',
+        twitterUrl: '',
+        instagramUrl: '',
+        facebookUrl: ''
     });
 
     const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +63,12 @@ const AdminDashboard = () => {
                 emailId: '',
                 password: '',
                 projectName: '',
-                projectDescription: ''
+                projectDescription: '',
+                displayMessage: '',
+                tagline: '',
+                twitterUrl: '',
+                instagramUrl: '',
+                facebookUrl: ''
             });
         } catch (error) {
             setSnackbar({
@@ -163,6 +175,74 @@ const AdminDashboard = () => {
                                             rows={3}
                                             variant="outlined"
                                             placeholder="Overview of this photographer's focus and services..."
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            label="Public Display Message"
+                                            name="displayMessage"
+                                            value={formData.displayMessage}
+                                            onChange={handleInputChange}
+                                            fullWidth
+                                            required
+                                            multiline
+                                            rows={2}
+                                            variant="outlined"
+                                            placeholder="A short welcome message for visitors (e.g. Capturing your best moments...)"
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            label="Tagline / Motto"
+                                            name="tagline"
+                                            value={formData.tagline}
+                                            onChange={handleInputChange}
+                                            fullWidth
+                                            variant="outlined"
+                                            placeholder="Optional short catchy phrase..."
+                                        />
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+
+                            {/* Social Presence Section */}
+                            <Grid item xs={12}>
+                                <Typography variant="h6" fontWeight="bold" color="text.primary" gutterBottom sx={{ mt: 2 }}>
+                                    Social Presence
+                                </Typography>
+                                <Divider sx={{ mb: 3 }} />
+                                <Grid container spacing={3}>
+                                    <Grid item xs={12} md={4}>
+                                        <TextField
+                                            label="Instagram URL"
+                                            name="instagramUrl"
+                                            value={formData.instagramUrl}
+                                            onChange={handleInputChange}
+                                            fullWidth
+                                            variant="outlined"
+                                            placeholder="https://instagram.com/..."
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} md={4}>
+                                        <TextField
+                                            label="Facebook URL"
+                                            name="facebookUrl"
+                                            value={formData.facebookUrl}
+                                            onChange={handleInputChange}
+                                            fullWidth
+                                            variant="outlined"
+                                            placeholder="https://facebook.com/..."
+                                        />
+                                    </Grid>
+                                    <Grid item xs={12} md={4}>
+                                        <TextField
+                                            label="Twitter URL"
+                                            name="twitterUrl"
+                                            value={formData.twitterUrl}
+                                            onChange={handleInputChange}
+                                            fullWidth
+                                            variant="outlined"
+                                            placeholder="https://twitter.com/..."
                                         />
                                     </Grid>
                                 </Grid>
