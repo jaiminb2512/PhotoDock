@@ -108,7 +108,8 @@ export const login = async (req, res) => {
 
         var project = null;
         if (user.role == "USER") {
-            project = await prisma.project.findUnique({
+
+            project = await prisma.project.findFirst({
                 where: {
                     projectId: user.projectId
                 }

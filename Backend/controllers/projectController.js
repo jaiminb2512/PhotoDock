@@ -119,7 +119,8 @@ export const createUserAndProject = async (req, res) => {
                     emailId: emailId.trim().toLowerCase(),
                     password: hashedPassword,
                     role: 'USER',
-                    projectId: project.projectId
+                    projectId: project.projectId,
+                    updatePassword: true
                 },
                 select: {
                     userId: true,
@@ -137,5 +138,43 @@ export const createUserAndProject = async (req, res) => {
     } catch (error) {
         console.error("createUserAndProject error:", error);
         return sendResponse(res, 500, "Failed to create User and Project", { error: error.message });
+    }
+};
+
+// Get specific project data for display by projectName
+export const getProjectByProjectName = async (req, res) => {
+    try {
+        const { projectName } = req.params;
+
+        if (!projectName) {
+            return sendResponse(res, 400, "projectName is required");
+        }
+
+        const project = await prisma.project.findFirst({
+            where: {
+                projectName: {
+                    equals: projectName.trim(),
+                    mode: 'insensitive'
+                }
+            },
+            select: {
+                projectId: true,
+                projectName: true,
+                displayMessage: true,
+                tagline: true,
+                twitterUrl: true,
+                instagramUrl: true,
+                facebookUrl: true
+            }
+        });
+
+        if (!project) {
+            return sendResponse(res, 404, "Project not found");
+        }
+
+        return sendResponse(res, 200, "Project profile retrieved successfully", project);
+    } catch (error) {
+        console.error("getProjectByProjectName error:", error);
+        return sendResponse(res, 500, "Failed to retrieve project profile", { error: error.message });
     }
 };

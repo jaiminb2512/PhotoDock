@@ -5,7 +5,34 @@ import { randomUUID } from "crypto";
 // Get all photos ordered by sequence
 export const getPhotos = async (req, res) => {
     try {
+        const { projectId, projectName } = req.query;
+
+        let whereClause = {};
+
+        if (projectId) {
+            whereClause = { projectId: projectId };
+        } else if (projectName) {
+            // Find project first if only projectName provided
+            const project = await prisma.project.findFirst({
+                where: {
+                    projectName: {
+                        equals: projectName.trim(),
+                        mode: 'insensitive'
+                    }
+                }
+            });
+
+            if (project) {
+                whereClause = { projectId: project.projectId };
+            }
+            else {
+                // If projectName provided but not found, return empty array
+                return sendResponse(res, 200, "Project not found, returning empty photos", []);
+            }
+        }
+
         const photos = await prisma.photo.findMany({
+            where: whereClause,
             orderBy: {
                 sequence: 'asc'
             }

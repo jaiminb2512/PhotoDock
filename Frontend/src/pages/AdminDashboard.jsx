@@ -10,10 +10,14 @@ import {
     Grid,
     CircularProgress,
     Snackbar,
-    Alert
+    Alert,
+    InputAdornment,
+    IconButton
 } from '@mui/material';
 import {
-    PersonAdd as PersonAddIcon
+    PersonAdd as PersonAddIcon,
+    Visibility,
+    VisibilityOff
 } from '@mui/icons-material';
 import Header from '../components/Header';
 import colors from '../styles/colors';
@@ -34,6 +38,7 @@ const AdminDashboard = () => {
         facebookUrl: ''
     });
 
+    const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
@@ -133,12 +138,25 @@ const AdminDashboard = () => {
                                         <TextField
                                             label="Initial Password"
                                             name="password"
-                                            type="password"
+                                            type={showPassword ? 'text' : 'password'}
                                             value={formData.password}
                                             onChange={handleInputChange}
                                             fullWidth
                                             required
                                             variant="outlined"
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <IconButton
+                                                            onClick={() => setShowPassword(!showPassword)}
+                                                            edge="end"
+                                                            sx={{ color: 'text.secondary' }}
+                                                        >
+                                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                ),
+                                            }}
                                         />
                                     </Grid>
                                 </Grid>

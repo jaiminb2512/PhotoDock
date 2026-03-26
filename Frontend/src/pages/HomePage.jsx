@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import {
     Box,
     Typography,
@@ -10,25 +11,37 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import colors from '../styles/colors';
 import photoService from '../services/photoService';
+import projectService from '../services/projectService';
 
 const HomePage = () => {
+    const { projectName } = useParams();
     const [photos, setPhotos] = useState([]);
+    const [projectInfo, setProjectInfo] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchPhotos = async () => {
+        const fetchPageData = async () => {
             try {
-                const data = await photoService.getPhotos();
-                setPhotos(data);
+                // Fetch both photos and project info in parallel
+                const [photosData, projectResponse] = await Promise.all([
+                    photoService.getPhotos({ projectName }),
+                    projectService.getProjectByProjectName(projectName)
+                ]);
+
+                setPhotos(photosData);
+                setProjectInfo(projectResponse.data); // Based on response structure provided
+                console.log(projectResponse.data);
             } catch (error) {
-                console.error("Error fetching photos:", error);
+                console.error("Error fetching homepage data:", error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchPhotos();
-    }, []);
+        if (projectName) {
+            fetchPageData();
+        }
+    }, [projectName]);
 
     // Helper to determine grid width and height based on masonry pattern (repeat every 6 images)
     const getGridStyles = (index) => {
@@ -54,64 +67,69 @@ const HomePage = () => {
             {/* Shared Header */}
             <Header />
 
-            <Container maxWidth="md" sx={{ mt: 10, mb: 10, textAlign: 'center' }}>
-                <Typography variant="h3" sx={{ mb: 4, fontWeight: 300, color: colors.text.heading }}>
-                    Embrace The Journey
-                </Typography>
-
-                <Box sx={{ maxWidth: '700px', mx: 'auto', mb: 4 }}>
-                    <Typography variant="body1" sx={{
-                        lineHeight: 1.8,
-                        fontSize: '1.1rem',
-                        color: colors.text.dark,
-                        fontFamily: colors.font.serif,
-                        fontStyle: 'italic'
-                    }}>
-                        Photographs have always been a powerful way to experience some of the most cherished moments of our lives. They become heirlooms that we pass down from generation to generation. My passion lies in creating photographs that document these moments in an intentional, artful and cinematic way. I often think about how my photos would feel like in someone's hand 15-20 years from now. Are they going to smile or cry when they revisit those moments..? I hope my photography will make much comfort in a way nothing else can....!!!
-                    </Typography>
+            {loading ? (
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
+                    <CircularProgress color="inherit" />
                 </Box>
+            ) : (
+                <>
+                    <Container maxWidth="md" sx={{ mt: 10, mb: 10, textAlign: 'center' }}>
+                        <Typography variant="h3" sx={{ mb: 4, fontWeight: 300, color: colors.text.heading, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                            {projectInfo?.tagline || "PORTFOLIO"}
+                        </Typography>
 
-                <Box sx={{ mb: 6 }}>
-                    <Typography variant="body1" sx={{ color: colors.black, fontSize: '1rem' }}>
-                        Let us write all the chapters of your beautiful fairy-tale to make it the most memorable phase of your life...
-                    </Typography>
-                    <Typography variant="h6" sx={{ mt: 2, fontWeight: 400 }}>
-                        - Maulik Doshi
-                    </Typography>
-                </Box>
-            </Container>
+                        <Box sx={{ maxWidth: '700px', mx: 'auto', mb: 4 }}>
+                            <Typography variant="body1" sx={{
+                                lineHeight: 1.8,
+                                fontSize: '1.1rem',
+                                color: colors.text.dark,
+                                fontFamily: colors.font.serif,
+                                fontStyle: 'italic'
+                            }}>
+                                {projectInfo?.displayMessage || "Welcome to my portfolio. Capturing moments that last forever."}
+                            </Typography>
+                        </Box>
 
-            {/* Dynamic Masonry-style Gallery */}
-            <Box sx={{ px: { xs: 0, md: 4, lg: 8 }, mb: 10 }}>
-                {loading ? (
-                    <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
-                        <CircularProgress color="inherit" />
+                        <Box sx={{ mb: 6 }}>
+                            <Typography variant="h6" sx={{ mt: 2, fontWeight: 400, letterSpacing: '0.05em' }}>
+                                — {projectInfo?.projectName || "Not Found"}
+                            </Typography>
+                        </Box>
+                    </Container>
+
+                    {/* Dynamic Masonry-style Gallery */}
+                    <Box sx={{ px: { xs: 0, md: 4, lg: 8 }, mb: 10 }}>
+                        {photos.length === 0 ? (
+                            <Typography variant="body2" sx={{ textAlign: 'center', color: colors.text.light, fontStyle: 'italic' }}>
+                                No photos found for this project yet.
+                            </Typography>
+                        ) : (
+                            <Grid container spacing={1}>
+                                {photos.map((photo, index) => {
+                                    const styles = getGridStyles(index);
+                                    return (
+                                        <Grid item xs={styles.xs} md={styles.md} key={photo.photoId || index}>
+                                            <Box
+                                                component="img"
+                                                src={photo.photoUrl}
+                                                alt={photo.photoName}
+                                                sx={{
+                                                    width: '100%',
+                                                    height: styles.height,
+                                                    objectFit: 'cover',
+                                                    display: 'block'
+                                                }}
+                                            />
+                                        </Grid>
+                                    );
+                                })}
+                            </Grid>
+                        )}
                     </Box>
-                ) : (
-                    <Grid container spacing={1}>
-                        {photos.map((photo, index) => {
-                            const styles = getGridStyles(index);
-                            return (
-                                <Grid item xs={styles.xs} md={styles.md} key={photo.photoId || index}>
-                                    <Box
-                                        component="img"
-                                        src={photo.photoUrl}
-                                        alt={photo.photoName}
-                                        sx={{
-                                            width: '100%',
-                                            height: styles.height,
-                                            objectFit: 'cover',
-                                            display: 'block'
-                                        }}
-                                    />
-                                </Grid>
-                            );
-                        })}
-                    </Grid>
-                )}
-            </Box>
+                </>
+            )}
 
-            <Footer />
+            <Footer projectInfo={projectInfo} />
         </Box>
     );
 };

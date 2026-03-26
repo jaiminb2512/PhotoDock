@@ -3,13 +3,16 @@ import {
     getAllProject,
     createProject,
     updateProject,
-    createUserAndProject
+    createUserAndProject,
+    getProjectByProjectName
 } from "../controllers/projectController.js";
 import { authenticate } from "../middleware/auth.js";
 
 const router = Router();
 
-// Define routes and attach controllers
+router.get("/:projectName", getProjectByProjectName); // get /api/project/:projectName
+
+// Define protected routes and attach controllers
 router.get("/", authenticate, getAllProject); // get /api/project
 router.post("/", authenticate, createProject); // post /api/project
 router.put("/", authenticate, updateProject); // put /api/project
