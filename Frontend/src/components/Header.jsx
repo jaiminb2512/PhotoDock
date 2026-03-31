@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    Box, 
-    Typography, 
+import {
+    Box,
+    Typography,
     Button,
     IconButton
 } from '@mui/material';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import authService from '../services/authService';
 import colors from '../styles/colors';
 
 const Header = () => {
     const navigate = useNavigate();
+    const { projectName: urlProjectName } = useParams();
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -27,11 +28,11 @@ const Header = () => {
     };
 
     return (
-        <Box component="header" sx={{ 
-            py: 3, 
-            px: { xs: 2, md: 6 }, 
-            display: 'flex', 
-            alignItems: 'center', 
+        <Box component="header" sx={{
+            py: 3,
+            px: { xs: 2, md: 6 },
+            display: 'flex',
+            alignItems: 'center',
             justifyContent: 'space-between',
             borderBottom: colors.border.light,
             bgcolor: colors.white,
@@ -43,18 +44,18 @@ const Header = () => {
                     ...(user?.role === 'ADMIN' ? [
                         { label: 'DASHBOARD', path: '/admin/dashboard' }
                     ] : [
-                        { label: 'HOME', path: `/${user?.projectName || 'default'}` },
-                        { label: 'BOOK ONLINE', path: `/${user?.projectName || 'default'}/book-online` },
-                        { label: 'Plans & Pricing', path: `/${user?.projectName || 'default'}/plans-pricing` }
+                        { label: 'HOME', path: `/${user?.projectName || urlProjectName || 'default'}` },
+                        { label: 'BOOK ONLINE', path: `/${user?.projectName || urlProjectName || 'default'}/book-online` },
+                        { label: 'Plans & Pricing', path: `/${user?.projectName || urlProjectName || 'default'}/plans-pricing` }
                     ])
                 ].map((item) => (
-                    <Typography 
-                        key={item.label} 
+                    <Typography
+                        key={item.label}
                         component={Link}
                         to={item.path}
-                        sx={{ 
-                            fontSize: '0.8rem', 
-                            letterSpacing: '0.1em', 
+                        sx={{
+                            fontSize: '0.8rem',
+                            letterSpacing: '0.1em',
                             cursor: 'pointer',
                             textDecoration: 'none',
                             color: 'inherit',
@@ -69,7 +70,7 @@ const Header = () => {
 
             <Box sx={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => navigate('/')}>
                 <Typography variant="h4" sx={{ fontWeight: 500, letterSpacing: '0.05em', lineHeight: 1.1 }}>
-                    Maulik Doshi
+                    {user?.fullName || urlProjectName || 'Maulik Doshi'}
                 </Typography>
                 <Typography variant="caption" sx={{ letterSpacing: '0.3em', fontSize: '0.65rem' }}>
                     PHOTOGRAPHY
@@ -85,10 +86,10 @@ const Header = () => {
                         </Button>
                     </>
                 ) : (
-                    <Button 
-                        component={Link} 
+                    <Button
+                        component={Link}
                         to="/login"
-                        startIcon={<AccountCircleIcon />} 
+                        startIcon={<AccountCircleIcon />}
                         sx={{ color: colors.black, fontSize: '0.85rem', textTransform: 'none' }}
                     >
                         Log In

@@ -40,13 +40,13 @@ const LoginPage = () => {
 
         try {
             const response = await authService.login({ emailId: data.email, password: data.password });
-            const user = response.data; // This is the user object from the backend
+            const user = response.data; // Correctly extract user from nested data property
 
             if (user.role === 'ADMIN') {
                 navigate('/admin/dashboard');
             } else if (user.role === 'USER') {
                 // If the backend returns a projectName for the user, use it in the path
-                const projectName = user.projectName || 'default';
+                const projectName = user.projectName;
                 navigate(`/${projectName}`);
             } else {
                 navigate('/');
@@ -79,11 +79,11 @@ const LoginPage = () => {
                         alignItems: 'center',
                     }}
                 >
-                    <Typography 
-                        variant="h4" 
-                        sx={{ 
-                            mb: 1, 
-                            fontWeight: 300, 
+                    <Typography
+                        variant="h4"
+                        sx={{
+                            mb: 1,
+                            fontWeight: 300,
                             color: colors.black,
                             fontFamily: colors.font.serif,
                             letterSpacing: '0.05em'
@@ -91,11 +91,11 @@ const LoginPage = () => {
                     >
                         Log In
                     </Typography>
-                    <Typography 
-                        variant="caption" 
-                        sx={{ 
-                            mb: 4, 
-                            letterSpacing: '0.2em', 
+                    <Typography
+                        variant="caption"
+                        sx={{
+                            mb: 4,
+                            letterSpacing: '0.2em',
                             fontSize: '0.7rem',
                             color: colors.text.light
                         }}
@@ -104,12 +104,12 @@ const LoginPage = () => {
                     </Typography>
 
                     {error && (
-                        <Alert 
-                            severity="error" 
+                        <Alert
+                            severity="error"
                             variant="outlined"
-                            sx={{ 
-                                width: '100%', 
-                                mb: 3, 
+                            sx={{
+                                width: '100%',
+                                mb: 3,
                                 borderRadius: 0,
                                 color: '#d32f2f',
                                 border: '1px solid #d32f2f'
@@ -141,7 +141,7 @@ const LoginPage = () => {
                                     variant="standard"
                                     error={!!errors.email}
                                     helperText={errors.email?.message}
-                                    sx={{ 
+                                    sx={{
                                         '& .MuiInput-underline:before': { borderBottomColor: colors.border.section },
                                         '& .MuiInput-underline:after': { borderBottomColor: colors.black },
                                         '& .MuiInputLabel-root': { color: colors.text.medium },
@@ -168,7 +168,7 @@ const LoginPage = () => {
                                     variant="standard"
                                     error={!!errors.password}
                                     helperText={errors.password?.message}
-                                    sx={{ 
+                                    sx={{
                                         '& .MuiInput-underline:before': { borderBottomColor: colors.border.section },
                                         '& .MuiInput-underline:after': { borderBottomColor: colors.black },
                                         '& .MuiInputLabel-root': { color: colors.text.medium },
@@ -194,9 +194,9 @@ const LoginPage = () => {
                             fullWidth
                             variant="contained"
                             disabled={loading}
-                            sx={{ 
-                                mt: 5, 
-                                mb: 3, 
+                            sx={{
+                                mt: 5,
+                                mb: 3,
                                 py: 1.5,
                                 bgcolor: colors.black,
                                 color: colors.white,
@@ -209,10 +209,10 @@ const LoginPage = () => {
                             {loading ? <CircularProgress size={24} color="inherit" /> : 'SIGN IN'}
                         </Button>
                         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                            <MuiLink 
-                                component={Link} 
-                                to="/register" 
-                                sx={{ 
+                            <MuiLink
+                                component={Link}
+                                to="/register"
+                                sx={{
                                     textDecoration: 'none',
                                     color: colors.text.light,
                                     fontSize: '0.8rem',
@@ -223,10 +223,10 @@ const LoginPage = () => {
                             </MuiLink>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                            <MuiLink 
-                                component={Link} 
-                                to="/" 
-                                sx={{ 
+                            <MuiLink
+                                component={Link}
+                                to="/"
+                                sx={{
                                     textDecoration: 'none',
                                     color: colors.text.disabled,
                                     fontSize: '0.75rem',
