@@ -61,9 +61,10 @@ model Service {
 
 model Photo {
   photoId             String           @id @default(uuid())
-  photoName           String
-  photoDescription    String
+  photoName           String?
+  photoDescription    String?
   photoUrl            String
+  setNo               Int
   sequence            Int
   updatedBy           String?
   updatedAt           DateTime?        @updatedAt
