@@ -8,7 +8,19 @@ const photoService = {
             params: filters
         });
         return response.data.data;
+    },
+    savePhotos: async (formData) => {
+        const response = await api({
+            method: API_ENDPOINTS.CREATE_PHOTO.method,
+            url: API_ENDPOINTS.CREATE_PHOTO.endpoint,
+            data: formData,
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return response.data;
     }
 };
+
 
 export default photoService;

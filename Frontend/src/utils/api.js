@@ -23,7 +23,8 @@ export const API_ENDPOINTS = {
     ADMIN_CREATE: { method: 'POST', endpoint: '/projects/admin-create' },
 
     // Project
-    GET_PROJECT: { method: 'GET', endpoint: '/projects' }
+    GET_PROJECT: { method: 'GET', endpoint: '/projects' },
+    LIST_PROJECTS: { method: 'GET', endpoint: '/projects/all' }
 };
 
 export const getApiUrl = (endpoint) => `${baseURL}${endpoint}`;

@@ -12,6 +12,7 @@ import authService from './services/authService'
 import RoleRoute from './components/RoleRoute.jsx'
 import './App.css'
 import colors from './styles/colors'
+import { AuthProvider } from './contexts/AuthContext'
 
 function AppContent() {
   return (
@@ -52,17 +53,9 @@ function AppContent() {
           <Route path="/:projectName/book-online" element={<BookOnlinePage />} />
           <Route path="/:projectName" element={<HomePage />} />
 
-          {/* Protected Area (Accessible to both USER and ADMIN) */}
-          <Route element={<RoleRoute allowedRoles={['USER']} />}>
-            <Route path="/:projectName/user/plans-pricing" element={<PricingPage />} />
-            <Route path="/:projectName/user/book-online" element={<BookOnlinePage />} />
-          </Route>
-
           {/* Example Admin Area (Accessible to ADMIN only - you can add pages here later) */}
           <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/plans-pricing" element={<PricingPage />} />
-            <Route path="/admin/book-online" element={<BookOnlinePage />} />
           </Route>
         </Routes>
       </Box>
@@ -74,15 +67,6 @@ function App() {
   const [themeMode, setThemeMode] = useState('light');
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      // Verify token on app load
-      authService.verifyToken().catch(() => {
-        // Token invalid, will be handled by RoleRoute
-        console.log("Token verification failed on app load");
-      });
-    }
-
     const savedTheme = localStorage.getItem('themeMode');
     if (savedTheme) {
       setThemeMode(savedTheme);
@@ -98,12 +82,14 @@ function App() {
   const theme = themeMode === 'light' ? lightTheme : darkTheme;
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <AppContent themeMode={themeMode} toggleTheme={toggleTheme} />
-      </Router>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <AppContent themeMode={themeMode} toggleTheme={toggleTheme} />
+        </Router>
+      </ThemeProvider>
+    </AuthProvider>
   )
 }
 

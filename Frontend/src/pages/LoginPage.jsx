@@ -14,7 +14,7 @@ import {
     Link as MuiLink
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import authService from '../services/authService';
+import { useAuth } from '../contexts/AuthContext';
 import colors from '../styles/colors';
 
 const LoginPage = () => {
@@ -22,6 +22,7 @@ const LoginPage = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const {
         control,
@@ -39,13 +40,12 @@ const LoginPage = () => {
         setLoading(true);
 
         try {
-            const response = await authService.login({ emailId: data.email, password: data.password });
-            const user = response.data; // Correctly extract user from nested data property
+            const response = await login({ emailId: data.email, password: data.password });
+            const user = response.data.data ? response.data.data : response.data;
 
             if (user.role === 'ADMIN') {
                 navigate('/admin/dashboard');
             } else if (user.role === 'USER') {
-                // If the backend returns a projectName for the user, use it in the path
                 const projectName = user.projectName;
                 navigate(`/${projectName}`);
             } else {

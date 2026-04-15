@@ -1,45 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import React from 'react';
+import { Navigate, Outlet, useParams } from 'react-router-dom';
 import { CircularProgress, Box } from '@mui/material';
-import authService from '../services/authService';
+import { useAuth } from '../contexts/AuthContext';
 
 /**
  * RoleRoute is a wrapper for react-router-dom routes that restricts access 
  * based on user roles (e.g., ['ADMIN'] or ['USER', 'ADMIN']).
  */
 const RoleRoute = ({ allowedRoles }) => {
-    const [isAuthorized, setIsAuthorized] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const { user, isAuthenticated, loading } = useAuth();
+    const { projectName } = useParams();
 
-    useEffect(() => {
-        const checkRole = async () => {
-            const token = localStorage.getItem("token");
-
-            if (!token) {
-                // Not logged in at all
-                setIsAuthorized(false);
-                setIsLoading(false);
-                return;
-            }
-
-            // Verify token with backend to get fresh user data including role
-            const { valid, user } = await authService.verifyToken();
-
-            if (valid && user && allowedRoles.includes(user.role)) {
-                // User is authenticated and their role is in the allowedRoles array!
-                setIsAuthorized(true);
-            } else {
-                // User is authenticated but does not have the correct role
-                setIsAuthorized(false);
-            }
-
-            setIsLoading(false);
-        };
-
-        checkRole();
-    }, [allowedRoles]);
-
-    if (isLoading) {
+    if (loading) {
         return (
             <Box
                 sx={{
@@ -54,12 +26,17 @@ const RoleRoute = ({ allowedRoles }) => {
         );
     }
 
-    if (!isAuthorized) {
-        // If not authorized for this route, redirect back to home (or a "Not Authorized" page)
-        return <Navigate to="/:login" replace />;
+    if (!isAuthenticated) {
+        // Redirect to login if not authenticated
+        return <Navigate to="/login" replace />;
     }
 
-    // Authorization passed, render the children routes
+    if (user && !allowedRoles.includes(user.role)) {
+        // If authenticated but role not allowed, redirect to home or project home
+        return <Navigate to={projectName ? `/${projectName}` : "/"} replace />;
+    }
+
+    // Role authorized, render children
     return <Outlet />;
 };
 

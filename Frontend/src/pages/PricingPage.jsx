@@ -21,12 +21,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Header from '../components/Header';
 import colors from '../styles/colors';
 import api, { API_ENDPOINTS } from '../utils/api';
+import { useAuth } from '../contexts/AuthContext';
+import { useParams } from 'react-router-dom';
 
 const PricingPage = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { isAuthenticated } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingPlanId, setEditingPlanId] = useState(null);
     const [newPlan, setNewPlan] = useState({ title: '', price: '', validity: '', description: '' });
+    const projectName = useParams().projectName;
 
     const [plans, setPlans] = useState([]);
 
@@ -35,16 +38,11 @@ const PricingPage = () => {
     const [planToDelete, setPlanToDelete] = useState(null);
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            setIsLoggedIn(true);
-        }
-
         const fetchServices = async () => {
             try {
                 const response = await api({
                     method: API_ENDPOINTS.GET_SERVICES.method,
-                    url: API_ENDPOINTS.GET_SERVICES.endpoint
+                    url: `${API_ENDPOINTS.CREATE_SERVICE.endpoint}/${projectName}`
                 });
                 if (response.data && response.data.data) {
                     const fetchedPlans = response.data.data.map(service => ({
@@ -149,7 +147,7 @@ const PricingPage = () => {
                 // Create Service
                 const response = await api({
                     method: API_ENDPOINTS.CREATE_SERVICE.method,
-                    url: API_ENDPOINTS.CREATE_SERVICE.endpoint,
+                    url: `${API_ENDPOINTS.CREATE_SERVICE.endpoint}/${projectName}`,
                     data: payload
                 });
 
@@ -199,7 +197,7 @@ const PricingPage = () => {
                     Choose your pricing plan
                 </Typography>
 
-                {isLoggedIn && (
+                {isAuthenticated && (
                     <Box sx={{ mb: 6 }}>
                         <Button
                             variant="contained"
@@ -236,7 +234,7 @@ const PricingPage = () => {
                                     boxShadow: colors.shadow.cardHover
                                 }
                             }}>
-                                {isLoggedIn && (
+                                {isAuthenticated && (
                                     <Box sx={{ position: 'absolute', top: 16, right: 16, display: 'flex', gap: 1 }}>
                                         <IconButton onClick={() => handleEditClick(plan)} size="small" sx={{ color: colors.text.light }}>
                                             <EditIcon fontSize="small" />
@@ -247,7 +245,7 @@ const PricingPage = () => {
                                     </Box>
                                 )}
 
-                                <Typography variant="h5" sx={{ mb: 2, fontWeight: 300, fontFamily: colors.font.serif, mt: isLoggedIn ? 2 : 0 }}>
+                                <Typography variant="h5" sx={{ mb: 2, fontWeight: 300, fontFamily: colors.font.serif, mt: isAuthenticated ? 2 : 0 }}>
                                     {plan.title}
                                 </Typography>
 

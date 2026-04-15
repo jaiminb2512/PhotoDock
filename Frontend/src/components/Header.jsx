@@ -42,7 +42,8 @@ const Header = () => {
             <Box sx={{ display: 'flex', gap: 3 }}>
                 {[
                     ...(user?.role === 'ADMIN' ? [
-                        { label: 'DASHBOARD', path: '/admin/dashboard' }
+                        { label: 'DASHBOARD', path: '/admin/dashboard' },
+                        { label: 'PHOTO UPLOAD', path: '/admin/photo-upload' }
                     ] : [
                         { label: 'HOME', path: `/${user?.projectName || urlProjectName || 'default'}` },
                         { label: 'BOOK ONLINE', path: `/${user?.projectName || urlProjectName || 'default'}/book-online` },
