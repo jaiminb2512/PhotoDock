@@ -35,9 +35,13 @@ export const createService = async (req, res) => {
             return sendResponse(res, 400, "serviceName and servicePrice are required");
         }
 
-        const id = randomUUID()
+        const project = await prisma.project.findFirst({
+            where: {
+                projectName: req.params.projectName
+            }
+        })
 
-        console.log(req.project);
+        const id = randomUUID()
 
         const newService = await prisma.service.create({
             data: {
@@ -45,7 +49,7 @@ export const createService = async (req, res) => {
                 serviceName: serviceName.trim(),
                 serviceDescription: serviceDescription?.trim() || "",
                 servicePrice: servicePrice.toString(),
-                projectId: req.project.projectId
+                projectId: project.projectId
             }
         });
 

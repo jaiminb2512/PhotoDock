@@ -5,7 +5,7 @@ import { authenticate } from "../middleware/auth.js";
 const router = Router();
 
 router.get("/:projectName", getServices);
-router.post("/", authenticate, createService);
+router.post("/:projectName", authenticate, createService);
 router.put("/:id", authenticate, updateService);
 router.delete("/:id", authenticate, deleteService);
 
