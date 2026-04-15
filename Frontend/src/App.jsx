@@ -7,9 +7,11 @@ import HomePage from './pages/HomePage.jsx'
 import PricingPage from './pages/PricingPage.jsx'
 import BookOnlinePage from './pages/BookOnlinePage.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
+import UserDashboard from './pages/UserDashboard.jsx'
 import { lightTheme, darkTheme } from './styles/theme'
 import authService from './services/authService'
 import RoleRoute from './components/RoleRoute.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 import './App.css'
 import colors from './styles/colors'
 import { AuthProvider } from './contexts/AuthContext'
@@ -53,7 +55,12 @@ function AppContent() {
           <Route path="/:projectName/book-online" element={<BookOnlinePage />} />
           <Route path="/:projectName" element={<HomePage />} />
 
-          {/* Example Admin Area (Accessible to ADMIN only - you can add pages here later) */}
+          {/* Protected Routes (Authenticated Users) */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/user/dashboard/:projectName" element={<UserDashboard />} />
+          </Route>
+
+          {/* Admin Routes (ADMIN only) */}
           <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
           </Route>

@@ -107,8 +107,7 @@ export const login = async (req, res) => {
         });
 
         var project = null;
-        if (user.role == "USER") {
-
+        if (user.projectId) {
             project = await prisma.project.findFirst({
                 where: {
                     projectId: user.projectId
@@ -122,6 +121,7 @@ export const login = async (req, res) => {
             fullName: user.fullName,
             emailId: user.emailId,
             role: user.role,
+            projectId: user.projectId,
             projectName: project?.projectName || "",
             token: token
         };
@@ -156,13 +156,21 @@ export const getMe = async (req, res) => {
             return sendResponse(res, 401, "Unauthorized");
         }
 
+        let project = null;
+        if(user.projectId){
+            project = await prisma.project.findFirst({
+                where: { projectId: user.projectId }
+            });
+        }
+
         // Return user info without password
         const userData = {
             userId: user.userId,
             fullName: user.fullName,
             emailId: user.emailId,
             role: user.role,
-            createdAt: user.createdAt
+            projectId: user.projectId,
+            projectName: project?.projectName || ""
         };
 
         return sendResponse(res, 200, "Token is valid", userData);

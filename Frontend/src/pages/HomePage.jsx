@@ -29,8 +29,7 @@ const HomePage = () => {
                 ]);
 
                 setPhotos(photosData);
-                setProjectInfo(projectResponse.data); // Based on response structure provided
-                console.log(projectResponse.data);
+                setProjectInfo(projectResponse.data); 
             } catch (error) {
                 console.error("Error fetching homepage data:", error);
             } finally {

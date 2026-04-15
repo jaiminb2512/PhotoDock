@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
-    Button,
-    IconButton
+    Button
 } from '@mui/material';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -45,6 +44,9 @@ const Header = () => {
                         { label: 'DASHBOARD', path: '/admin/dashboard' },
                         { label: 'PHOTO UPLOAD', path: '/admin/photo-upload' }
                     ] : [
+                        ...(user ? [
+                            { label: 'MY PROJECT', path: `/user/dashboard/${user.projectName}` }
+                        ] : []),
                         { label: 'HOME', path: `/${user?.projectName || urlProjectName || 'default'}` },
                         { label: 'BOOK ONLINE', path: `/${user?.projectName || urlProjectName || 'default'}/book-online` },
                         { label: 'Plans & Pricing', path: `/${user?.projectName || urlProjectName || 'default'}/plans-pricing` }

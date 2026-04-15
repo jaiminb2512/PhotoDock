@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
     CREATE_SERVICE: { method: 'POST', endpoint: '/services' },
     UPDATE_SERVICE: { method: 'PUT', endpoint: '/services' },
     DELETE_SERVICE: { method: 'DELETE', endpoint: '/services' },
+    UPDATE_PROJECT: { method: 'PUT', endpoint: '/projects' },
 
     // Admin
     ADMIN_CREATE: { method: 'POST', endpoint: '/projects/admin-create' },
