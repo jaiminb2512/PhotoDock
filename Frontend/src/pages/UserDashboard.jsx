@@ -12,7 +12,8 @@ import {
     Alert,
     Card,
     CardContent,
-    Divider
+    Divider,
+    Modal
 } from '@mui/material';
 import {
     Edit as EditIcon,
@@ -23,6 +24,7 @@ import Header from '../components/Header';
 import colors from '../styles/colors';
 import { useAuth } from '../contexts/AuthContext';
 import projectService from '../services/projectService';
+import photoService from '../services/photoService';
 
 const UserDashboard = () => {
     const { user } = useAuth();
@@ -31,6 +33,15 @@ const UserDashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+    const [uploadModalOpen, setUploadModalOpen] = useState(false);
+    const [uploadLoading, setUploadLoading] = useState(false);
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [uploadForm, setUploadForm] = useState({
+        photoName: '',
+        photoDescription: '',
+        setNo: '1',
+        sequence: '1'
+    });
     
     const [projectData, setProjectData] = useState({
         projectId: '',
@@ -42,6 +53,20 @@ const UserDashboard = () => {
         instagramUrl: '',
         facebookUrl: ''
     });
+
+    const modalStyle = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '90%',
+        maxWidth: 520,
+        bgcolor: 'background.paper',
+        boxShadow: 24,
+        p: 4,
+        borderRadius: 2,
+        outline: 'none'
+    };
 
     const [editFormData, setEditFormData] = useState({
         projectId: '',
@@ -103,6 +128,69 @@ const UserDashboard = () => {
     const handleEditChange = (e) => {
         const { name, value } = e.target;
         setEditFormData({ ...editFormData, [name]: value });
+    };
+
+    const handleUploadFormChange = (e) => {
+        const { name, value } = e.target;
+        setUploadForm({ ...uploadForm, [name]: value });
+    };
+
+    const handleFileChange = (e) => {
+        const files = e.target.files ? Array.from(e.target.files) : [];
+        setSelectedFiles(files);
+    };
+
+    const openUploadModal = () => {
+        setUploadModalOpen(true);
+    };
+
+    const closeUploadModal = () => {
+        setUploadModalOpen(false);
+        setSelectedFiles([]);
+        setUploadForm({ photoName: '', photoDescription: '', setNo: '1', sequence: '1' });
+    };
+
+    const handleUploadPhotos = async () => {
+        if (!selectedFiles.length) {
+            setSnackbar({ open: true, message: 'Please select at least one image to upload.', severity: 'warning' });
+            return;
+        }
+
+        if (!projectData.projectId) {
+            setSnackbar({ open: true, message: 'Project ID is missing.', severity: 'error' });
+            return;
+        }
+
+        if (!uploadForm.setNo.trim()) {
+            setSnackbar({ open: true, message: 'Set number is required.', severity: 'warning' });
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('projectId', projectData.projectId);
+        formData.append('setNo', uploadForm.setNo);
+        if (uploadForm.photoName) formData.append('photoName', uploadForm.photoName);
+        if (uploadForm.photoDescription) formData.append('photoDescription', uploadForm.photoDescription);
+        if (uploadForm.sequence) formData.append('sequence', uploadForm.sequence);
+
+        selectedFiles.forEach((file) => {
+            formData.append('photos', file);
+        });
+
+        try {
+            setUploadLoading(true);
+            await photoService.savePhotos(formData);
+            setSnackbar({ open: true, message: 'Photos uploaded successfully!', severity: 'success' });
+            closeUploadModal();
+        } catch (error) {
+            setSnackbar({
+                open: true,
+                message: error.response?.data?.message || 'Failed to upload photos.',
+                severity: 'error'
+            });
+        } finally {
+            setUploadLoading(false);
+        }
     };
 
     const handleSave = async () => {
@@ -172,23 +260,37 @@ const UserDashboard = () => {
                 {/* Project Header Card */}
                 <Card sx={{ mb: 4, boxShadow: 2 }}>
                     <CardContent sx={{ p: 4 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 2 }}>
                             <Typography variant="h4" sx={{ fontWeight: 600, color: colors.text.primary }}>
                                 {projectData.projectName}
                             </Typography>
-                            {!isEditing && (
+                            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                                 <Button
-                                    startIcon={<EditIcon />}
-                                    onClick={() => setIsEditing(true)}
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={openUploadModal}
                                     sx={{
                                         bgcolor: colors.accent.primary,
                                         color: '#fff',
                                         '&:hover': { bgcolor: colors.accent.hover }
                                     }}
                                 >
-                                    Edit
+                                    Upload Photos
                                 </Button>
-                            )}
+                                {!isEditing && (
+                                    <Button
+                                        startIcon={<EditIcon />}
+                                        onClick={() => setIsEditing(true)}
+                                        sx={{
+                                            bgcolor: colors.accent.primary,
+                                            color: '#fff',
+                                            '&:hover': { bgcolor: colors.accent.hover }
+                                        }}
+                                    >
+                                        Edit
+                                    </Button>
+                                )}
+                            </Box>
                         </Box>
                         <Typography variant="body2" sx={{ color: colors.text.faint }}>
                             Created on {new Date(projectData.createdAt).toLocaleDateString()}
@@ -400,6 +502,102 @@ const UserDashboard = () => {
                     </Grid>
                 )}
             </Container>
+
+            <Modal
+                open={uploadModalOpen}
+                onClose={closeUploadModal}
+                aria-labelledby="upload-photos-modal-title"
+                aria-describedby="upload-photos-modal-description"
+            >
+                <Box sx={modalStyle}>
+                    <Typography id="upload-photos-modal-title" variant="h6" component="h2" sx={{ mb: 2, fontWeight: 700 }}>
+                        Upload Photos
+                    </Typography>
+                    <Divider sx={{ mb: 3 }} />
+                    <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                            <Button component="label" variant="outlined" fullWidth>
+                                Select Images
+                                <input
+                                    hidden
+                                    accept="image/*"
+                                    multiple
+                                    type="file"
+                                    onChange={handleFileChange}
+                                />
+                            </Button>
+                            {selectedFiles.length > 0 && (
+                                <Typography variant="body2" sx={{ mt: 1, color: colors.text.faint }}>
+                                    {selectedFiles.length} file(s) selected
+                                </Typography>
+                            )}
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Set No"
+                                name="setNo"
+                                value={uploadForm.setNo}
+                                onChange={handleUploadFormChange}
+                                variant="outlined"
+                                type="number"
+                                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                fullWidth
+                                label="Sequence"
+                                name="sequence"
+                                value={uploadForm.sequence}
+                                onChange={handleUploadFormChange}
+                                variant="outlined"
+                                type="number"
+                                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                label="Photo Name"
+                                name="photoName"
+                                value={uploadForm.photoName}
+                                onChange={handleUploadFormChange}
+                                variant="outlined"
+                                placeholder="Optional photo name"
+                                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                fullWidth
+                                multiline
+                                rows={3}
+                                label="Photo Description"
+                                name="photoDescription"
+                                value={uploadForm.photoDescription}
+                                onChange={handleUploadFormChange}
+                                variant="outlined"
+                                placeholder="Optional description for all selected photos"
+                                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 1 }}>
+                            <Button onClick={closeUploadModal} disabled={uploadLoading}>
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={handleUploadPhotos}
+                                variant="contained"
+                                disabled={uploadLoading}
+                                sx={{ bgcolor: colors.accent.primary, color: '#fff', '&:hover': { bgcolor: colors.accent.hover } }}
+                            >
+                                {uploadLoading ? 'Uploading...' : 'Upload'}
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </Modal>
 
             <Snackbar
                 open={snackbar.open}

@@ -1,60 +1,36 @@
 import prisma from "../dbConnect/prismaClient.js";
 import sendResponse from "../utils/response.js";
 import { randomUUID } from "crypto";
-import { google } from 'googleapis';
-import { Readable } from 'stream';
+import { v2 as cloudinary } from 'cloudinary';
 
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const GOOGLE_REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN;
-const GOOGLE_DRIVE_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID;
+const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY;
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
 
-const oauth2Client = new google.auth.OAuth2(
-    GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET,
-    'https://developers.google.com/oauthplayground'
-);
-
-oauth2Client.setCredentials({ refresh_token: GOOGLE_REFRESH_TOKEN });
-
-const drive = google.drive({
-    version: 'v3',
-    auth: oauth2Client
+cloudinary.config({
+    cloud_name: CLOUDINARY_CLOUD_NAME,
+    api_key: CLOUDINARY_API_KEY,
+    api_secret: CLOUDINARY_API_SECRET
 });
 
-const uploadToDrive = async (file) => {
+const uploadToCloudinary = async (file) => {
     try {
-        const response = await drive.files.create({
-            requestBody: {
-                name: `${Date.now()}-${file.originalname}`,
-                parents: GOOGLE_DRIVE_FOLDER_ID ? [GOOGLE_DRIVE_FOLDER_ID] : []
-            },
-            media: {
-                mimeType: file.mimetype,
-                body: Readable.from(file.buffer)
-            }
+        return new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+                {
+                    resource_type: 'auto',
+                    public_id: `PhotoDock/${Date.now()}-${Math.random().toString(36).substring(7)}`,
+                    overwrite: true
+                },
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result.secure_url);
+                }
+            );
+            stream.end(file.buffer);
         });
-
-        const fileId = response.data.id;
-
-        // Set file permissions to public view
-        await drive.permissions.create({
-            fileId: fileId,
-            requestBody: {
-                role: 'reader',
-                type: 'anyone'
-            }
-        });
-
-        // Get web view link
-        const fileData = await drive.files.get({
-            fileId: fileId,
-            fields: 'webViewLink'
-        });
-
-        return fileData.data.webViewLink;
     } catch (error) {
-        console.error('Google Drive Upload Error:', error);
+        console.error('Cloudinary Upload Error:', error);
         throw error;
     }
 };
@@ -113,11 +89,16 @@ export const savePhoto = async (req, res) => {
         }
 
         if (!projectId) {
-            return sendResponse(res, 400, "ProjectId is required")
+            return sendResponse(res, 400, "ProjectId is required");
         }
 
         if (!setNo) {
-            return sendResponse(res, 400, "SetNo is required")
+            return sendResponse(res, 400, "SetNo is required");
+        }
+
+        const setNoValue = parseInt(setNo);
+        if (Number.isNaN(setNoValue)) {
+            return sendResponse(res, 400, "SetNo must be a valid number");
         }
 
         const project = await prisma.project.findUnique({
@@ -128,24 +109,49 @@ export const savePhoto = async (req, res) => {
             return sendResponse(res, 404, "Project not found");
         }
 
-        const photosData = [];
-        let currentSequence = parseInt(sequence) || 0;
+        const names = Array.isArray(photoName) ? photoName : photoName ? [photoName] : [];
+        const descriptions = Array.isArray(photoDescription) ? photoDescription : photoDescription ? [photoDescription] : [];
+        const sequences = Array.isArray(sequence) ? sequence : sequence ? [sequence] : [];
 
-        for (const file of files) {
-            const photoUrl = await uploadToDrive(file);
+        let defaultSequence = 1;
+        if (!Array.isArray(sequence) && sequence !== undefined && sequence !== null) {
+            const parsed = parseInt(sequence);
+            defaultSequence = Number.isNaN(parsed) ? 1 : parsed;
+        }
+
+        const photosData = [];
+        let sequenceCounter = defaultSequence;
+
+        for (let index = 0; index < files.length; index++) {
+            const file = files[index];
+            const photoUrl = await uploadToCloudinary(file);
             const id = randomUUID();
+
+            const name = names[index]?.trim() || file.originalname;
+            const description = descriptions[index]?.trim() || "";
+            const seqValue = Array.isArray(sequences)
+                ? parseInt(sequences[index])
+                : Number.isNaN(parseInt(sequence))
+                    ? sequenceCounter
+                    : parseInt(sequence);
+
+            const photoSequence = Number.isInteger(seqValue) ? seqValue : sequenceCounter;
+            if (!Array.isArray(sequences)) {
+                sequenceCounter += 1;
+            }
 
             const newPhoto = await prisma.photo.create({
                 data: {
                     photoId: id,
                     projectId: projectId,
-                    setNo: setNo,
-                    photoName: photoName?.trim() || file.originalname,
-                    photoDescription: photoDescription?.trim() || "",
+                    setNo: setNoValue,
+                    photoName: name,
+                    photoDescription: description,
                     photoUrl: photoUrl,
-                    sequence: currentSequence++
+                    sequence: photoSequence
                 }
             });
+
             photosData.push(newPhoto);
         }
 
