@@ -49,17 +49,33 @@ const HomePage = () => {
         switch (patternIdx) {
             case 0: // Hero image (1st in every set of 6)
                 return { xs: 12, md: 12, height: { xs: '400px', md: '700px' } };
-            case 1:
-            case 2: // Side-by-side (2nd & 3rd)
-                return { xs: 12, md: 6, height: '500px' };
-            case 3:
-            case 4:
-            case 5: // Three-column (4th, 5th, 6th)
-                return { xs: 12, md: 4, height: '400px' };
             default:
-                return { xs: 12, md: 12, height: '400px' };
+                return {};
         }
     };
+
+    const getGroupedPhotos = () => {
+        if (!photos || photos.length === 0) return [];
+
+        const grouped = photos.reduce((acc, photo) => {
+            const setKey = photo.setNo ?? 0;
+            if (!acc[setKey]) acc[setKey] = [];
+            acc[setKey].push(photo);
+            return acc;
+        }, {});
+
+        return Object.keys(grouped)
+            .map((setKey) => ({
+                setNo: Number(setKey),
+                photos: grouped[setKey].sort((a, b) => {
+                    if (a.sequence !== b.sequence) return a.sequence - b.sequence;
+                    return new Date(a.createdAt) - new Date(b.createdAt);
+                })
+            }))
+            .sort((a, b) => a.setNo - b.setNo);
+    };
+
+    const groupedPhotos = getGroupedPhotos();
 
     return (
         <Box sx={{ bgcolor: colors.white, minHeight: '100vh', color: colors.black, fontFamily: colors.font.serif }}>
@@ -96,33 +112,66 @@ const HomePage = () => {
                         </Box>
                     </Container>
 
-                    {/* Dynamic Masonry-style Gallery */}
-                    <Box sx={{ px: { xs: 0, md: 4, lg: 8 }, mb: 10 }}>
-                        {photos.length === 0 ? (
+                    {/* Gallery grouped by setNo - each set in single row */}
+                    <Box sx={{ px: { xs: 0, md: 0, lg: 4 }, mb: 10 }}>
+                        {groupedPhotos.length === 0 ? (
                             <Typography variant="body2" sx={{ textAlign: 'center', color: colors.text.light, fontStyle: 'italic' }}>
                                 No photos found for this project yet.
                             </Typography>
                         ) : (
-                            <Grid container spacing={1}>
-                                {photos.map((photo, index) => {
-                                    const styles = getGridStyles(index);
-                                    return (
-                                        <Grid item xs={styles.xs} md={styles.md} key={photo.photoId || index}>
-                                            <Box
-                                                component="img"
-                                                src={photo.photoUrl}
-                                                alt={photo.photoName}
-                                                sx={{
-                                                    width: '100%',
-                                                    height: styles.height,
-                                                    objectFit: 'cover',
-                                                    display: 'block'
-                                                }}
-                                            />
-                                        </Grid>
-                                    );
-                                })}
-                            </Grid>
+                            groupedPhotos.map((group) => (
+                                <Box key={group.setNo} sx={{ mb: 6 }}>
+                                    {/* Special handling for setNo 1 (main photo - single and bigger) */}
+                                    {group.setNo === 1 ? (
+                                        <Box sx={{ width: '100%' }}>
+                                            {group.photos.map((photo, index) => (
+                                                <Box
+                                                    key={photo.photoId || index}
+                                                    component="img"
+                                                    src={photo.photoUrl}
+                                                    alt={photo.photoName}
+                                                    sx={{
+                                                        width: '100%',
+                                                        height: { xs: '300px', sm: '400px', md: '500px' },
+                                                        objectFit: 'contain',
+                                                        display: 'block',
+                                                        borderRadius: '4px',
+                                                        backgroundColor: '#f5f5f5'
+                                                    }}
+                                                />
+                                            ))}
+                                        </Box>
+                                    ) : (
+                                        /* Dynamic grid for other sets - tries to fit all in single row */
+                                        <Box
+                                            sx={{
+                                                display: 'grid',
+                                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                                gap: '8px',
+                                                width: '100%'
+                                            }}
+                                        >
+                                            {group.photos.map((photo, index) => (
+                                                <Box
+                                                    key={photo.photoId || index}
+                                                    component="img"
+                                                    src={photo.photoUrl}
+                                                    alt={photo.photoName}
+                                                    sx={{
+                                                        width: '100%',
+                                                        height: { xs: '200px', sm: '250px', md: '300px' },
+                                                        objectFit: 'contain',
+                                                        display: 'block',
+                                                        borderRadius: '4px',
+                                                        backgroundColor: '#f5f5f5'
+                                                    }}
+                                                />
+                                            ))}
+                                        </Box>
+                                    )}
+
+                                </Box>
+                            ))
                         )}
                     </Box>
                 </>

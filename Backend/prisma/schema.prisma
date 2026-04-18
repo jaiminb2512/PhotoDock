@@ -12,6 +12,10 @@ enum role {
   USER
 }
 
+enum imageProvider{
+  cloudinary
+}
+
 model User {
   userId              String           @id @default(uuid())
   fullName            String
@@ -40,6 +44,8 @@ model Project {
   twitterUrl          String?
   instagramUrl        String?
   facebookUrl         String?
+  currentImageProvider       imageProvider            @default(cloudinary) 
+  oldImageProvider           imageProvider            @default(cloudinary) 
 
   services            Service[]
   photos              Photo[]
@@ -69,6 +75,7 @@ model Photo {
   updatedBy           String?
   updatedAt           DateTime?        @updatedAt
   createdAt           DateTime         @default(now())
+  imageProvider       imageProvider           @default(cloudinary) 
 
   projectId           String
   project             Project?         @relation(fields: [projectId], references: [projectId])

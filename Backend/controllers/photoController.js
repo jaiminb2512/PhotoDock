@@ -13,6 +13,14 @@ cloudinary.config({
     api_secret: CLOUDINARY_API_SECRET
 });
 
+const uploadPhoto = async (project, file) => {
+    if (project.currentImageProvider === "cloudinary") {
+        return await uploadToCloudinary(file);
+    } else {
+        return null;
+    }
+};
+
 const uploadToCloudinary = async (file) => {
     try {
         return new Promise((resolve, reject) => {
@@ -124,7 +132,7 @@ export const savePhoto = async (req, res) => {
 
         for (let index = 0; index < files.length; index++) {
             const file = files[index];
-            const photoUrl = await uploadToCloudinary(file);
+            const photoUrl = await uploadPhoto(project, file);
             const id = randomUUID();
 
             const name = names[index]?.trim() || file.originalname;
@@ -148,7 +156,8 @@ export const savePhoto = async (req, res) => {
                     photoName: name,
                     photoDescription: description,
                     photoUrl: photoUrl,
-                    sequence: photoSequence
+                    sequence: photoSequence,
+                    imageProvider: project.imageProvider
                 }
             });
 
