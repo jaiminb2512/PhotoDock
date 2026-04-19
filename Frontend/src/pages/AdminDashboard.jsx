@@ -12,7 +12,8 @@ import {
     Snackbar,
     Alert,
     InputAdornment,
-    IconButton
+    IconButton,
+    MenuItem
 } from '@mui/material';
 import {
     PersonAdd as PersonAddIcon,
@@ -35,12 +36,34 @@ const AdminDashboard = () => {
         tagline: '',
         twitterUrl: '',
         instagramUrl: '',
-        facebookUrl: ''
+        facebookUrl: '',
+        planId: '' // New field
     });
 
+    const [plans, setPlans] = useState([]);
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
+
+    // Fetch plans on mount
+    React.useEffect(() => {
+        const fetchPlans = async () => {
+            try {
+                const url = getApiUrl(API_ENDPOINTS.SUBSCRIPTION_PLANS.endpoint);
+                const response = await api.get(url);
+                setPlans(response.data.data);
+                
+                // Auto-select default plan if any
+                const defaultPlan = response.data.data.find(p => p.isDefault);
+                if (defaultPlan) {
+                    setFormData(prev => ({ ...prev, planId: defaultPlan.planId }));
+                }
+            } catch (error) {
+                console.error('Failed to fetch plans:', error);
+            }
+        };
+        fetchPlans();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -73,7 +96,8 @@ const AdminDashboard = () => {
                 tagline: '',
                 twitterUrl: '',
                 instagramUrl: '',
-                facebookUrl: ''
+                facebookUrl: '',
+                planId: plans.find(p => p.isDefault)?.planId || ''
             });
         } catch (error) {
             setSnackbar({
@@ -169,6 +193,30 @@ const AdminDashboard = () => {
                                 </Typography>
                                 <Divider sx={{ mb: 3 }} />
                                 <Grid container spacing={3}>
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            select
+                                            label="Initial Subscription Plan"
+                                            name="planId"
+                                            value={formData.planId}
+                                            onChange={handleInputChange}
+                                            fullWidth
+                                            required
+                                            variant="outlined"
+                                            helperText="Select the service tier for this photographer"
+                                        >
+                                            {plans.map((option) => (
+                                                <MenuItem key={option.planId} value={option.planId}>
+                                                    {option.planName} (${parseFloat(option.price).toFixed(2)} / {option.billingCycle})
+                                                </MenuItem>
+                                            ))}
+                                            {plans.length === 0 && (
+                                                <MenuItem disabled value="">
+                                                    No plans available. Create one first.
+                                                </MenuItem>
+                                            )}
+                                        </TextField>
+                                    </Grid>
                                     <Grid item xs={12}>
                                         <TextField
                                             label="Project Name"

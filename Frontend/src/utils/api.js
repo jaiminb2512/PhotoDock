@@ -25,7 +25,6 @@ export const API_ENDPOINTS = {
 
     // Project
     GET_PROJECT: { method: 'GET', endpoint: '/projects' },
-    LIST_PROJECTS: { method: 'GET', endpoint: '/projects/all' },
     SUBSCRIPTION_PLANS: { method: 'GET', endpoint: '/subscription-plans' }
 };
 

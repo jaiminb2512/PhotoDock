@@ -48,6 +48,7 @@ const Header = ({ shadow }) => {
                 {[
                     ...(user?.role === 'ADMIN' ? [
                         { label: 'DASHBOARD', path: '/admin/dashboard' },
+                        { label: 'PROJECTS', path: '/admin/projects' },
                         { label: 'SUBSCRIPTION PLANS', path: '/admin/subscription-plans' }
                     ] : [
                         ...(user ? [

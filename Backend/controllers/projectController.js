@@ -3,72 +3,141 @@ import sendResponse from "../utils/response.js";
 import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
 
-// Get all projects
+// Get all projects with detailed association for Admin
 export const getAllProject = async (req, res) => {
     try {
-        const project = await prisma.project.findMany();
-
-        return sendResponse(res, 200, "Project retrieved successfully", project);
-    } catch (error) {
-        console.error("getProject error:", error);
-        return sendResponse(res, 500, "Failed to retrieve project", { error: error.message });
-    }
-};
-
-// Create a new project
-export const createProject = async (req, res) => {
-    try {
-        const { projectName, projectDescription, displayMessage, tagline, twitterUrl, instagramUrl, facebookUrl } = req.body;
-
-        if (!projectName || !projectDescription || !displayMessage) {
-            return sendResponse(res, 400, "projectName, projectDescription and displayMessage are required");
-        }
-
-        const id = randomUUID();
-
-        const newProject = await prisma.$transaction(async (tx) => {
-            const project = await tx.project.create({
-                data: {
-                    projectId: id,
-                    projectName: projectName.trim(),
-                    projectDescription: projectDescription.trim(),
-                    displayMessage: displayMessage.trim(),
-                    tagline: tagline?.trim() || null,
-                    twitterUrl: twitterUrl?.trim() || null,
-                    instagramUrl: instagramUrl?.trim() || null,
-                    facebookUrl: facebookUrl?.trim() || null
+        const projects = await prisma.project.findMany({
+            include: {
+                user: {
+                    select: {
+                        userId: true,
+                        fullName: true,
+                        emailId: true,
+                    }
+                },
+                usages: {
+                    where: { status: 'ACTIVE' },
+                    include: { 
+                        plan: {
+                            select: {
+                                planName: true,
+                                billingCycle: true,
+                                price: true
+                            }
+                        } 
+                    },
+                    take: 1
+                },
+                _count: {
+                    select: { photos: true }
                 }
-            });
-
-            return project;
+            },
+            orderBy: { createdAt: 'desc' }
         });
 
-        return sendResponse(res, 201, "Project created successfully", newProject);
+        return sendResponse(res, 200, "Projects retrieved successfully", projects);
     } catch (error) {
-        console.error("createProject error:", error);
-        return sendResponse(res, 500, "Failed to create project", { error: error.message });
+        console.error("getAllProject error:", error);
+        return sendResponse(res, 500, "Failed to retrieve projects", { error: error.message });
     }
 };
 
 // Update existing project details
 export const updateProject = async (req, res) => {
     try {
-        const { projectId, projectName, projectDescription, displayMessage, tagline, twitterUrl, instagramUrl, facebookUrl } = req.body;
+        const { 
+            projectId, 
+            projectName, 
+            projectDescription, 
+            displayMessage, 
+            tagline, 
+            twitterUrl, 
+            instagramUrl, 
+            facebookUrl,
+            planId // New field
+        } = req.body;
 
-        const updatedProject = await prisma.project.update({
-            where: { projectId: projectId },
-            data: {
-                ...(projectName && { projectName: projectName.trim() }),
-                ...(projectDescription && { projectDescription: projectDescription.trim() }),
-                ...(displayMessage && { displayMessage: displayMessage.trim() }),
-                ...(tagline !== undefined && { tagline: tagline?.trim() || null }),
-                ...(twitterUrl !== undefined && { twitterUrl: twitterUrl?.trim() || null }),
-                ...(instagramUrl !== undefined && { instagramUrl: instagramUrl?.trim() || null }),
-                ...(facebookUrl !== undefined && { facebookUrl: facebookUrl?.trim() || null })
-            }
+        if (!projectId) {
+            return sendResponse(res, 400, "projectId is required");
+        }
+
+        const project = await prisma.project.findUnique({
+            where: { projectId },
+            include: { user: true }
         });
 
-        return sendResponse(res, 200, "Project updated successfully", updatedProject);
+        if (!project) {
+            return sendResponse(res, 404, "Project not found");
+        }
+
+        let selectedPlan = null;
+        if (planId) {
+            selectedPlan = await prisma.subscriptionPlan.findUnique({
+                where: { planId }
+            });
+            if (!selectedPlan) {
+                return sendResponse(res, 404, "Subscription plan not found");
+            }
+        }
+
+        const result = await prisma.$transaction(async (tx) => {
+            // 1. Update project details
+            const updatedProject = await tx.project.update({
+                where: { projectId: projectId },
+                data: {
+                    ...(projectName && { projectName: projectName.trim() }),
+                    ...(projectDescription && { projectDescription: projectDescription.trim() }),
+                    ...(displayMessage && { displayMessage: displayMessage.trim() }),
+                    ...(tagline !== undefined && { tagline: tagline?.trim() || null }),
+                    ...(twitterUrl !== undefined && { twitterUrl: twitterUrl?.trim() || null }),
+                    ...(instagramUrl !== undefined && { instagramUrl: instagramUrl?.trim() || null }),
+                    ...(facebookUrl !== undefined && { facebookUrl: facebookUrl?.trim() || null })
+                }
+            });
+
+            // 2. Handle Plan Change
+            if (planId && project.user) {
+                // Find current active usage for this user (could be linked to project or be initial null)
+                const currentUsage = await tx.usage.findFirst({
+                    where: {
+                        userId: project.user.userId,
+                        status: 'ACTIVE'
+                    }
+                });
+
+                // Mark current usage as CANCELLED if it exists
+                if (currentUsage) {
+                    await tx.usage.update({
+                        where: { usageId: currentUsage.usageId },
+                        data: { status: 'CANCELLED' }
+                    });
+                }
+
+                // Calculate end date based on plan duration
+                const endDate = new Date();
+                endDate.setDate(endDate.getDate() + selectedPlan.durationDays);
+
+                // Create new usage record linked to this project
+                await tx.usage.create({
+                    data: {
+                        usageId: randomUUID(),
+                        userId: project.user.userId,
+                        projectId: projectId, // Link it to the project now
+                        planId: selectedPlan.planId,
+                        maxPhotos: selectedPlan.maxPhotos,
+                        monthlyPhotoUploadsLimit: selectedPlan.monthlyPhotoUploads,
+                        maxOnlineBookingAllowed: selectedPlan.maxOnlineBookingAllowed,
+                        status: 'ACTIVE',
+                        startDate: new Date(),
+                        endDate: endDate
+                    }
+                });
+            }
+
+            return updatedProject;
+        });
+
+        return sendResponse(res, 200, "Project updated successfully", result);
     } catch (error) {
         console.error("updateProject error:", error);
         return sendResponse(res, 500, "Failed to update project", { error: error.message });
@@ -78,13 +147,24 @@ export const updateProject = async (req, res) => {
 // Admin: Create a new User and their associated Project together
 export const createUserAndProject = async (req, res) => {
     try {
-        const { fullName, emailId, password, projectName, projectDescription, displayMessage, tagline, twitterUrl, instagramUrl, facebookUrl } = req.body;
+        const {
+            fullName,
+            emailId,
+            password,
+            projectName,
+            projectDescription,
+            displayMessage,
+            tagline,
+            twitterUrl,
+            instagramUrl,
+            facebookUrl,
+            planId
+        } = req.body;
 
         if (!fullName || !emailId || !password || !projectName || !projectDescription || !displayMessage) {
             return sendResponse(res, 400, "fullName, emailId, password, projectName, projectDescription, and displayMessage are required");
         }
 
-        // Check if email already exists
         const existingUser = await prisma.user.findUnique({
             where: { emailId: emailId.trim().toLowerCase() }
         });
@@ -93,11 +173,29 @@ export const createUserAndProject = async (req, res) => {
             return sendResponse(res, 409, "User with this email already exists");
         }
 
+        let selectedPlan = null;
+        if (planId) {
+            selectedPlan = await prisma.subscriptionPlan.findUnique({
+                where: { planId }
+            });
+            if (!selectedPlan) {
+                return sendResponse(res, 404, "Specified subscription plan not found");
+            }
+        } else {
+            selectedPlan = await prisma.subscriptionPlan.findFirst({
+                where: { isDefault: true }
+            });
+
+            if (!selectedPlan) {
+                return sendResponse(res, 400, "Subscription plan is required. No planId provided and no default plan configured.");
+            }
+        }
+
         const hashedPassword = await bcrypt.hash(password.trim(), 10);
         const userId = randomUUID();
         const projectId = randomUUID();
 
-        // Use a transaction to ensure both are created successfully or neither is
+        // Use a transaction to ensure everything is created successfully or nothing is
         const result = await prisma.$transaction(async (tx) => {
             const project = await tx.project.create({
                 data: {
@@ -131,10 +229,30 @@ export const createUserAndProject = async (req, res) => {
                 }
             });
 
-            return { user, project };
+            // Calculate end date based on plan duration
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate() + selectedPlan.durationDays);
+
+            // Create initial usage record
+            await tx.usage.create({
+                data: {
+                    usageId: randomUUID(),
+                    userId: user.userId,
+                    projectId: null, // Initial null as requested
+                    planId: selectedPlan.planId,
+                    maxPhotos: selectedPlan.maxPhotos,
+                    monthlyPhotoUploadsLimit: selectedPlan.monthlyPhotoUploads,
+                    maxOnlineBookingAllowed: selectedPlan.maxOnlineBookingAllowed,
+                    status: 'ACTIVE',
+                    startDate: new Date(),
+                    endDate: endDate
+                }
+            });
+
+            return { user, project, plan: selectedPlan.planName };
         });
 
-        return sendResponse(res, 201, "User and Project created successfully", result);
+        return sendResponse(res, 201, "User, Project and Subscription initialized successfully", result);
     } catch (error) {
         console.error("createUserAndProject error:", error);
         return sendResponse(res, 500, "Failed to create User and Project", { error: error.message });
