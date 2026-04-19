@@ -119,3 +119,10 @@ export const authenticate = async (req, res, next) => {
     req.user = user.userDetails;
     next();
 };
+
+export const isAdmin = async (req, res, next) => {
+    if (!req.user || req.user.role !== "ADMIN") {
+        return sendResponse(res, 403, "Access denied. Admin privileges required.");
+    }
+    next();
+};

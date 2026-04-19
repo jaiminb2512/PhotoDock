@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage.jsx'
 import PricingPage from './pages/PricingPage.jsx'
 import BookOnlinePage from './pages/BookOnlinePage.jsx'
 import AdminDashboard from './pages/AdminDashboard.jsx'
+import SubscriptionPlansPage from './pages/SubscriptionPlansPage.jsx'
 import UserDashboard from './pages/UserDashboard.jsx'
 import { lightTheme, darkTheme } from './styles/theme'
 import authService from './services/authService'
@@ -63,6 +64,7 @@ function AppContent() {
           {/* Admin Routes (ADMIN only) */}
           <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/subscription-plans" element={<SubscriptionPlansPage />} />
           </Route>
         </Routes>
       </Box>

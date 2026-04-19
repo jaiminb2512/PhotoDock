@@ -9,7 +9,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import authService from '../services/authService';
 import colors from '../styles/colors';
 
-const Header = () => {
+const Header = ({ shadow }) => {
     const navigate = useNavigate();
     const { projectName: urlProjectName } = useParams();
     const [user, setUser] = useState(null);
@@ -33,16 +33,22 @@ const Header = () => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderBottom: colors.border.light,
+            borderBottom: shadow ? 'none' : colors.border.light,
+            boxShadow: shadow ? '0 4px 20px rgba(0,0,0,0.08)' : 'none',
             bgcolor: colors.white,
             color: colors.black,
-            fontFamily: colors.font.serif
+            fontFamily: colors.font.serif,
+            position: shadow ? 'fixed' : 'relative',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1100
         }}>
             <Box sx={{ display: 'flex', gap: 3 }}>
                 {[
                     ...(user?.role === 'ADMIN' ? [
                         { label: 'DASHBOARD', path: '/admin/dashboard' },
-                        { label: 'PHOTO UPLOAD', path: '/admin/photo-upload' }
+                        { label: 'SUBSCRIPTION PLANS', path: '/admin/subscription-plans' }
                     ] : [
                         ...(user ? [
                             { label: 'MY PROJECT', path: `/user/dashboard/${user.projectName}` }
