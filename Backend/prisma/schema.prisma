@@ -12,71 +12,155 @@ enum role {
   USER
 }
 
-enum imageProvider{
+enum imageProvider {
   cloudinary
 }
 
+enum billingCycle {
+  MONTHLY
+  YEARLY
+}
+
+enum usageStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+}
+
 model User {
-  userId              String           @id @default(uuid())
-  fullName            String
-  emailId             String           @unique
-  password            String
-  role                role             @default(USER)
-  isDeleted           Boolean          @default(false)
-  updatedBy           String?
-  updatedAt           DateTime?        @updatedAt
-  createdAt           DateTime         @default(now())
-  projectId           String?          @unique
-  project             Project?         @relation(fields: [projectId], references: [projectId])
-  updatePassword      Boolean          @default(false)
+  userId         String    @id @default(uuid())
+  fullName       String
+  emailId        String    @unique
+  password       String
+  role           role      @default(USER)
+  isDeleted      Boolean   @default(false)
+
+  updatedBy      String?
+  updatedAt      DateTime? @updatedAt
+  createdAt      DateTime  @default(now())
+
+  projectId      String?   @unique
+  project        Project?  @relation(fields: [projectId], references: [projectId])
+
+  updatePassword Boolean   @default(false)
+
+  usages         Usage[]
 }
 
 model Project {
-  projectId           String           @id @default(uuid())
+  projectId           String   @id @default(uuid())
   projectName         String
   projectDescription  String
-  updatedAt           DateTime?        @updatedAt
-  createdAt           DateTime         @default(now())
-  
-  displayMessage      String   @db.Text
+
+  updatedAt           DateTime? @updatedAt
+  createdAt           DateTime  @default(now())
+
+  displayMessage      String @db.Text
   tagline             String?
-  
+
   twitterUrl          String?
   instagramUrl        String?
   facebookUrl         String?
-  currentImageProvider       imageProvider            @default(cloudinary) 
-  oldImageProvider           imageProvider            @default(cloudinary) 
+
+  currentImageProvider imageProvider @default(cloudinary)
+  oldImageProvider     imageProvider @default(cloudinary)
 
   services            Service[]
   photos              Photo[]
   user                User?
+
+  usages              Usage[]
 }
 
 model Service {
-  serviceId           String           @id @default(uuid())
+  serviceId           String   @id @default(uuid())
   serviceName         String
   serviceDescription  String
   servicePrice        Decimal
-  isDeleted           Boolean          @default(false)
+
+  isDeleted           Boolean  @default(false)
+
   updatedBy           String?
-  updatedAt           DateTime?        @updatedAt
-  createdAt           DateTime         @default(now())
+  updatedAt           DateTime? @updatedAt
+  createdAt           DateTime  @default(now())
+
   projectId           String
-  project             Project?         @relation(fields: [projectId], references: [projectId])
+  project             Project? @relation(fields: [projectId], references: [projectId])
 }
 
 model Photo {
-  photoId             String           @id @default(uuid())
+  photoId             String   @id @default(uuid())
   photoName           String?
   photoDescription    String?
   photoUrl            String
+
   setNo               Int
   sequence            Int
+
   updatedBy           String?
-  updatedAt           DateTime?        @updatedAt
-  createdAt           DateTime         @default(now())
-  imageProvider       imageProvider           @default(cloudinary) 
+  updatedAt           DateTime? @updatedAt
+  createdAt           DateTime  @default(now())
+
+  imageProvider       imageProvider @default(cloudinary)
 
   projectId           String
-  project             Project?         @relation(fields: [projectId], references: [projectId])
+  project             Project? @relation(fields: [projectId], references: [projectId])
+}
+
+//
+// ✅ NEW MODELS START HERE
+//
+
+model SubscriptionPlan {
+  planId        String   @id @default(uuid())
+  planName      String
+  description   String
+
+  price         Decimal
+  billingCycle  billingCycle
+  durationDays  Int
+
+  // Feature limits
+  maxPhotos                Int
+  monthlyPhotoUploads      Int
+  onlineBookingAllowed     Boolean
+  maxOnlineBookingAllowed  Int?
+
+  isDefault     Boolean   @default(false)
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  usages        Usage[]
+}
+
+model Usage {
+  usageId       String   @id @default(uuid())
+
+  // Relations
+  userId        String
+  user          User     @relation(fields: [userId], references: [userId])
+
+  projectId     String
+  project       Project  @relation(fields: [projectId], references: [projectId])
+
+  planId        String
+  plan          SubscriptionPlan @relation(fields: [planId], references: [planId])
+
+  // Snapshot (VERY IMPORTANT)
+  maxPhotos                Int
+  monthlyPhotoUploadsLimit Int
+  maxOnlineBookingAllowed  Int?
+
+  // Usage tracking
+  monthlyPhotoUploadsUsed  Int @default(0)
+  onlineBookingsUsed       Int @default(0)
+
+  // Lifecycle
+  status        usageStatus @default(ACTIVE)
+  startDate     DateTime    @default(now())
+  endDate       DateTime
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
