@@ -17,14 +17,14 @@ export const getAllProject = async (req, res) => {
                 },
                 usages: {
                     where: { status: 'ACTIVE' },
-                    include: { 
+                    include: {
                         plan: {
                             select: {
                                 planName: true,
                                 billingCycle: true,
                                 price: true
                             }
-                        } 
+                        }
                     },
                     take: 1
                 },
@@ -45,14 +45,14 @@ export const getAllProject = async (req, res) => {
 // Update existing project details
 export const updateProject = async (req, res) => {
     try {
-        const { 
-            projectId, 
-            projectName, 
-            projectDescription, 
-            displayMessage, 
-            tagline, 
-            twitterUrl, 
-            instagramUrl, 
+        const {
+            projectId,
+            projectName,
+            projectDescription,
+            displayMessage,
+            tagline,
+            twitterUrl,
+            instagramUrl,
             facebookUrl,
             planId // New field
         } = req.body;
@@ -195,6 +195,11 @@ export const createUserAndProject = async (req, res) => {
         const userId = randomUUID();
         const projectId = randomUUID();
 
+        const today = new Date();
+
+        const planEndDate = new Date(today);
+        planEndDate.setDate(planEndDate.getDate() + selectedPlan.durationDays);
+
         // Use a transaction to ensure everything is created successfully or nothing is
         const result = await prisma.$transaction(async (tx) => {
             const project = await tx.project.create({
@@ -206,7 +211,8 @@ export const createUserAndProject = async (req, res) => {
                     tagline: tagline?.trim() || null,
                     twitterUrl: twitterUrl?.trim() || null,
                     instagramUrl: instagramUrl?.trim() || null,
-                    facebookUrl: facebookUrl?.trim() || null
+                    facebookUrl: facebookUrl?.trim() || null,
+                    planEndDate: planEndDate
                 }
             });
 
@@ -218,7 +224,7 @@ export const createUserAndProject = async (req, res) => {
                     password: hashedPassword,
                     role: 'USER',
                     projectId: project.projectId,
-                    updatePassword: true
+                    updatePassword: true,
                 },
                 select: {
                     userId: true,
