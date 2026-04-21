@@ -47,7 +47,7 @@ const Header = ({ shadow }) => {
             <Box sx={{ display: 'flex', gap: 3 }}>
                 {[
                     ...(user?.role === 'ADMIN' ? [
-                        { label: 'DASHBOARD', path: '/admin/dashboard' },
+                        { label: 'USER', path: '/admin/user-create' },
                         { label: 'PROJECTS', path: '/admin/projects' },
                         { label: 'SUBSCRIPTION PLANS', path: '/admin/subscription-plans' }
                     ] : [

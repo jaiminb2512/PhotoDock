@@ -44,7 +44,7 @@ const LoginPage = () => {
             const user = response.data.data ? response.data.data : response.data;
 
             if (user.role === 'ADMIN') {
-                navigate('/admin/dashboard');
+                navigate('/admin/user-create');
             } else if (user.role === 'USER') {
                 const projectName = user.projectName;
                 navigate(`/${projectName}`);

@@ -6,7 +6,7 @@ import RegisterPage from './pages/RegisterPage.jsx'
 import HomePage from './pages/HomePage.jsx'
 import PricingPage from './pages/PricingPage.jsx'
 import BookOnlinePage from './pages/BookOnlinePage.jsx'
-import AdminDashboard from './pages/AdminDashboard.jsx'
+import UserCreate from './pages/UserCreate.jsx'
 import SubscriptionPlansPage from './pages/SubscriptionPlansPage.jsx'
 import AdminProjectsPage from './pages/AdminProjectsPage.jsx'
 import UserDashboard from './pages/UserDashboard.jsx'
@@ -64,7 +64,7 @@ function AppContent() {
 
           {/* Admin Routes (ADMIN only) */}
           <Route element={<RoleRoute allowedRoles={['ADMIN']} />}>
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/user-create" element={<UserCreate />} />
             <Route path="/admin/subscription-plans" element={<SubscriptionPlansPage />} />
             <Route path="/admin/projects" element={<AdminProjectsPage />} />
           </Route>
