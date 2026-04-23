@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { ThemeProvider, CssBaseline, Box } from '@mui/material'
 import LoginPage from './pages/LoginPage.jsx'
 import RegisterPage from './pages/RegisterPage.jsx'
@@ -14,13 +14,25 @@ import UserDashboard from './pages/UserDashboard.jsx'
 import { lightTheme, darkTheme } from './styles/theme'
 import RoleRoute from './components/RoleRoute.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
+import Sidebar from './components/Sidebar.jsx'
+import Header from './components/Header.jsx'
 import './App.css'
 import colors from './styles/colors'
 import { AuthProvider } from './contexts/AuthContext'
 
 function AppContent() {
+  const location = useLocation();
+  
+  // Determine if the current route is an authenticated/admin route
+  const isAuthRoute = location.pathname.startsWith('/admin') || 
+                      location.pathname.startsWith('/user/dashboard');
+  
+  const showSidebar = isAuthRoute;
+  const showHeader = !isAuthRoute;
+
   return (
     <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+      {showSidebar && <Sidebar />}
       <Box
         component="main"
         sx={{
@@ -28,6 +40,7 @@ function AppContent() {
           overflowY: 'auto',
           overflowX: 'hidden',
           width: '100%',
+          ml: showSidebar ? '280px' : 0,
           transition: (theme) => theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
@@ -49,6 +62,7 @@ function AppContent() {
           }
         }}
       >
+        {showHeader && <Header />}
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<LoginPage />} />

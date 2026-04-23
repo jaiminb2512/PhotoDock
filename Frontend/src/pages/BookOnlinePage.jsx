@@ -12,7 +12,6 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
 import colors from '../styles/colors';
 
@@ -117,7 +116,7 @@ const BookOnlinePage = () => {
 
     return (
         <Box sx={{ bgcolor: colors.white, minHeight: '100vh', color: colors.black, fontFamily: colors.font.serif }}>
-            <Header />
+
 
             <Box sx={{ position: 'relative' }}>
 

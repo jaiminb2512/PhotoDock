@@ -7,7 +7,6 @@ import {
     Grid,
     CircularProgress
 } from '@mui/material';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
 import colors from '../styles/colors';
 import photoService from '../services/photoService';
@@ -29,7 +28,7 @@ const HomePage = () => {
                 ]);
 
                 setPhotos(photosData);
-                setProjectInfo(projectResponse.data); 
+                setProjectInfo(projectResponse.data);
             } catch (error) {
                 console.error("Error fetching homepage data:", error);
             } finally {
@@ -79,17 +78,14 @@ const HomePage = () => {
 
     return (
         <Box sx={{ bgcolor: colors.white, minHeight: '100vh', color: colors.black, fontFamily: colors.font.serif }}>
-            {/* Shared Header */}
-            <Header />
-
             {loading ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
                     <CircularProgress color="inherit" />
                 </Box>
             ) : (
                 <>
-                    <Container maxWidth="md" sx={{ mt: 10, mb: 10, textAlign: 'center' }}>
-                        <Typography variant="h3" sx={{ mb: 4, fontWeight: 300, color: colors.text.heading, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                    <Container maxWidth="md" sx={{ mb: 10, textAlign: 'center' }}>
+                        <Typography variant="h3" sx={{ pt: 10, mb: 4, fontWeight: 300, color: colors.text.heading, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                             {projectInfo?.tagline || "PORTFOLIO"}
                         </Typography>
 

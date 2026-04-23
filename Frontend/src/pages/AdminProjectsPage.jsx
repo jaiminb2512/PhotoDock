@@ -40,7 +40,7 @@ import {
     Assessment as UsageIcon,
     History as HistoryIcon
 } from '@mui/icons-material';
-import Header from '../components/Header';
+import Header from '../components/Header'; // Remove this line if you want to be extra clean, but I'll just remove the usage below
 import colors from '../styles/colors';
 import api, { API_ENDPOINTS, getApiUrl } from '../utils/api';
 
@@ -147,12 +147,7 @@ const AdminProjectsPage = () => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
-            <Header shadow />
-
-            {/* Spacer for fixed header */}
-            <Box sx={{ height: { xs: '80px', md: '100px' } }} />
-
-            <Container maxWidth="3xl" sx={{ mt: 2, mb: 10, flexGrow: 1 }}>
+            <Container maxWidth="3xl" sx={{ mt: 5, mb: 10, flexGrow: 1 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 5 }}>
                     <Box>
                         <Typography variant="h3" sx={{

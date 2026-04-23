@@ -42,7 +42,8 @@ const Header = ({ shadow }) => {
             top: 0,
             left: 0,
             right: 0,
-            zIndex: 1100
+            zIndex: 1100,
+            maxHeight: '10vh'
         }}>
             <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
                 {[
@@ -54,9 +55,9 @@ const Header = ({ shadow }) => {
                         ...(user ? [
                             { label: 'MY PROJECT', path: `/user/dashboard/${user.projectName}` }
                         ] : []),
-                        { label: 'HOME', path: `/${user?.projectName || urlProjectName || 'default'}` },
-                        { label: 'BOOK ONLINE', path: `/${user?.projectName || urlProjectName || 'default'}/book-online` },
-                        { label: 'Plans & Pricing', path: `/${user?.projectName || urlProjectName || 'default'}/plans-pricing` }
+                        { label: 'HOME', path: `/${user?.projectName || urlProjectName}` },
+                        { label: 'BOOK ONLINE', path: `/${user?.projectName || urlProjectName}/book-online` },
+                        { label: 'Plans & Pricing', path: `/${user?.projectName || urlProjectName}/plans-pricing` }
                     ])
                 ].map((item) => (
                     <Typography

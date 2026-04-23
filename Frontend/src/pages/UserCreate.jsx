@@ -20,7 +20,6 @@ import {
     Visibility,
     VisibilityOff
 } from '@mui/icons-material';
-import Header from '../components/Header';
 import colors from '../styles/colors';
 import api, { API_ENDPOINTS, getApiUrl } from '../utils/api';
 
@@ -118,9 +117,7 @@ const UserCreate = () => {
             bgcolor: 'background.default',
             overflowX: 'hidden'
         }}>
-            <Header />
-
-            <Container maxWidth="none" sx={{ mt: 8, mb: 10, flexGrow: 1 }}>
+            <Container maxWidth="none" sx={{ mt: 5, mb: 10, flexGrow: 1 }}>
 
                 <Paper
                     elevation={0}

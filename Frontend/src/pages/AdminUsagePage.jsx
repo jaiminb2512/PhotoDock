@@ -23,14 +23,13 @@ import {
     NavigateNext as NextIcon,
     Assessment as UsageIcon
 } from '@mui/icons-material';
-import Header from '../components/Header';
 import colors from '../styles/colors';
 import api, { API_ENDPOINTS, getApiUrl } from '../utils/api';
 
 const AdminUsagePage = () => {
     const { projectId } = useParams();
     const navigate = useNavigate();
-    
+
     const [usageHistory, setUsageHistory] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [projectInfo, setProjectInfo] = useState(null);
@@ -46,12 +45,12 @@ const AdminUsagePage = () => {
             const url = `${getApiUrl(API_ENDPOINTS.PROJECT_USAGE.endpoint)}/${projectId}?page=${page + 1}&limit=${limit}`;
             const response = await api.get(url);
             setUsageHistory(response.data.data.usages);
-            
+
             // Set project info from the first usage record if available
             if (response.data.data.usages.length > 0) {
                 setProjectInfo(response.data.data.usages[0].project);
             }
-            
+
             setPagination(prev => ({
                 ...prev,
                 totalCount: response.data.data.pagination.totalCount,
@@ -82,18 +81,13 @@ const AdminUsagePage = () => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
-            <Header shadow />
-
-            {/* Spacer for fixed header */}
-            <Box sx={{ height: { xs: '80px', md: '100px' } }} />
-
-            <Container maxWidth="lg" sx={{ mt: 2, mb: 10, flexGrow: 1 }}>
+            <Container sx={{ mt: 5, mb: 10, flexGrow: 1 }}>
                 {/* Breadcrumbs */}
                 <Breadcrumbs separator={<NextIcon fontSize="small" />} sx={{ mb: 3 }}>
-                    <Link 
-                        underline="hover" 
-                        color="inherit" 
-                        href="#" 
+                    <Link
+                        underline="hover"
+                        color="inherit"
+                        href="#"
                         onClick={(e) => { e.preventDefault(); navigate('/admin/projects'); }}
                         sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
                     >
@@ -176,10 +170,10 @@ const AdminUsagePage = () => {
                                             </Typography>
                                         </TableCell>
                                         <TableCell>
-                                            <Chip 
-                                                label={usage.status} 
+                                            <Chip
+                                                label={usage.status}
                                                 size="small"
-                                                sx={{ 
+                                                sx={{
                                                     fontWeight: 600,
                                                     bgcolor: usage.status === 'ACTIVE' ? 'rgba(74, 124, 89, 0.1)' : 'rgba(0,0,0,0.05)',
                                                     color: usage.status === 'ACTIVE' ? colors.accent.primary : colors.text.muted

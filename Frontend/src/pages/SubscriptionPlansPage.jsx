@@ -35,7 +35,6 @@ import {
     Star as StarIcon,
     StarBorder as StarBorderIcon
 } from '@mui/icons-material';
-import Header from '../components/Header';
 import colors from '../styles/colors';
 import api, { API_ENDPOINTS, getApiUrl } from '../utils/api';
 
@@ -44,12 +43,12 @@ const SubscriptionPlansPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isActionLoading, setIsActionLoading] = useState(false);
     const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-    
+
     // Dialog State
     const [openDialog, setOpenDialog] = useState(false);
     const [dialogMode, setDialogMode] = useState('add'); // 'add' or 'edit'
     const [selectedPlanId, setSelectedPlanId] = useState(null);
-    
+
     // Form State
     const initialFormState = {
         planName: '',
@@ -144,7 +143,7 @@ const SubscriptionPlansPage = () => {
                 await api.put(`${baseUrl}/${selectedPlanId}`, dataToSubmit);
                 showSnackbar('Subscription plan updated successfully');
             }
-            
+
             handleCloseDialog();
             fetchPlans();
         } catch (error) {
@@ -156,7 +155,7 @@ const SubscriptionPlansPage = () => {
 
     const handleDeletePlan = async (id) => {
         if (!window.confirm('Are you sure you want to delete this subscription plan?')) return;
-        
+
         setIsActionLoading(true);
         try {
             const baseUrl = getApiUrl(API_ENDPOINTS.SUBSCRIPTION_PLANS.endpoint);
@@ -172,16 +171,11 @@ const SubscriptionPlansPage = () => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
-            <Header shadow />
-            
-            {/* Spacer for fixed header */}
-            <Box sx={{ height: { xs: '80px', md: '100px' } }} />
-
-            <Container maxWidth="lg" sx={{ mt: 2, mb: 10, flexGrow: 1 }}>
+            <Container maxWidth="none" sx={{ mt: 5, mb: 10, flexGrow: 1 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 5 }}>
                     <Box>
-                        <Typography variant="h3" sx={{ 
-                            fontWeight: 600, 
+                        <Typography variant="h3" sx={{
+                            fontWeight: 600,
                             color: colors.text.heading,
                             letterSpacing: '-0.02em',
                             mb: 1
@@ -193,11 +187,11 @@ const SubscriptionPlansPage = () => {
                         </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', gap: 2 }}>
-                        <Button 
-                            variant="outlined" 
-                            startIcon={<RefreshIcon />} 
+                        <Button
+                            variant="outlined"
+                            startIcon={<RefreshIcon />}
                             onClick={fetchPlans}
-                            sx={{ 
+                            sx={{
                                 borderRadius: '12px',
                                 textTransform: 'none',
                                 borderColor: colors.text.faint,
@@ -211,11 +205,11 @@ const SubscriptionPlansPage = () => {
                         >
                             Refresh
                         </Button>
-                        <Button 
-                            variant="contained" 
-                            startIcon={<AddIcon />} 
+                        <Button
+                            variant="contained"
+                            startIcon={<AddIcon />}
                             onClick={() => handleOpenDialog('add')}
-                            sx={{ 
+                            sx={{
                                 bgcolor: colors.accent.primary,
                                 '&:hover': { bgcolor: colors.accent.dark },
                                 borderRadius: '12px',
@@ -234,11 +228,11 @@ const SubscriptionPlansPage = () => {
                         <CircularProgress sx={{ color: colors.accent.primary }} />
                     </Box>
                 ) : (
-                    <TableContainer 
-                        component={Paper} 
+                    <TableContainer
+                        component={Paper}
                         elevation={0}
-                        sx={{ 
-                            borderRadius: '24px', 
+                        sx={{
+                            borderRadius: '24px',
                             border: `1px solid ${colors.text.faint}`,
                             background: '#ffffff',
                             boxShadow: '0 20px 40px rgba(0,0,0,0.04)',
@@ -275,9 +269,9 @@ const SubscriptionPlansPage = () => {
                                                 <Typography fontWeight="medium">${parseFloat(plan.price).toFixed(2)}</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <Chip 
-                                                    label={plan.billingCycle} 
-                                                    size="small" 
+                                                <Chip
+                                                    label={plan.billingCycle}
+                                                    size="small"
                                                     variant="outlined"
                                                     color={plan.billingCycle === 'YEARLY' ? 'primary' : 'default'}
                                                 />
@@ -286,10 +280,10 @@ const SubscriptionPlansPage = () => {
                                                 <Typography variant="body2">{plan.maxPhotos} total / {plan.monthlyPhotoUploads} monthly</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                <Chip 
-                                                    label={plan.onlineBookingAllowed ? `Allowed (${plan.maxOnlineBookingAllowed || '∞'})` : 'Disabled'} 
-                                                    size="small" 
-                                                    sx={{ 
+                                                <Chip
+                                                    label={plan.onlineBookingAllowed ? `Allowed (${plan.maxOnlineBookingAllowed || '∞'})` : 'Disabled'}
+                                                    size="small"
+                                                    sx={{
                                                         fontWeight: 600,
                                                         bgcolor: plan.onlineBookingAllowed ? 'rgba(74, 124, 89, 0.1)' : 'rgba(211, 47, 47, 0.1)',
                                                         color: plan.onlineBookingAllowed ? colors.accent.primary : '#d32f2f',
@@ -324,10 +318,10 @@ const SubscriptionPlansPage = () => {
             </Container>
 
             {/* Plan Form Dialog */}
-            <Dialog 
-                open={openDialog} 
-                onClose={handleCloseDialog} 
-                maxWidth="sm" 
+            <Dialog
+                open={openDialog}
+                onClose={handleCloseDialog}
+                maxWidth="sm"
                 fullWidth
                 PaperProps={{
                     sx: {
@@ -431,7 +425,7 @@ const SubscriptionPlansPage = () => {
                                 onChange={handleInputChange}
                             />
                         </Box>
-                        
+
                         <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <FormControlLabel
                                 control={
@@ -460,11 +454,11 @@ const SubscriptionPlansPage = () => {
                 </DialogContent>
                 <DialogActions sx={{ p: 3 }}>
                     <Button onClick={handleCloseDialog} color="inherit">Cancel</Button>
-                    <Button 
-                        onClick={handleSubmit} 
-                        variant="contained" 
+                    <Button
+                        onClick={handleSubmit}
+                        variant="contained"
                         disabled={isActionLoading}
-                        sx={{ 
+                        sx={{
                             bgcolor: colors.accent.primary,
                             '&:hover': { bgcolor: colors.accent.dark },
                             borderRadius: 2

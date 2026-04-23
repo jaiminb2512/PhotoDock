@@ -20,7 +20,6 @@ import {
     Save as SaveIcon,
     Cancel as CancelIcon
 } from '@mui/icons-material';
-import Header from '../components/Header';
 import colors from '../styles/colors';
 import { useAuth } from '../contexts/AuthContext';
 import projectService from '../services/projectService';
@@ -244,7 +243,6 @@ const UserDashboard = () => {
     if (isLoading) {
         return (
             <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
-                <Header />
                 <Container maxWidth="md" sx={{ mt: 10, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <CircularProgress />
                 </Container>
@@ -254,7 +252,7 @@ const UserDashboard = () => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: 'background.default' }}>
-            <Header />
+
 
             <Container maxWidth="md" sx={{ mt: 10, mb: 10, flexGrow: 1 }}>
                 {/* Project Header Card */}

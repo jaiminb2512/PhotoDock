@@ -18,7 +18,6 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Header from '../components/Header';
 import colors from '../styles/colors';
 import api, { API_ENDPOINTS } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -183,10 +182,7 @@ const PricingPage = () => {
 
     return (
         <Box sx={{ bgcolor: colors.white, minHeight: '100vh', color: colors.black, fontFamily: colors.font.serif }}>
-            {/* Header */}
-            <Header />
-
-            <Container maxWidth="lg" sx={{ mt: 10, mb: 10, textAlign: 'center' }}>
+            <Container maxWidth="lg" sx={{ pt: 5, mb: 10, textAlign: 'center' }}>
                 <Typography variant="h4" sx={{
                     mb: 8,
                     fontWeight: 300,
