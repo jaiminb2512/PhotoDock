@@ -244,7 +244,7 @@ export const createUserAndProject = async (req, res) => {
                 data: {
                     usageId: randomUUID(),
                     userId: user.userId,
-                    projectId: null, // Initial null as requested
+                    projectId: project.projectId,
                     planId: selectedPlan.planId,
                     maxPhotos: selectedPlan.maxPhotos,
                     monthlyPhotoUploadsLimit: selectedPlan.monthlyPhotoUploads,

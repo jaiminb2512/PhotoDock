@@ -154,6 +154,7 @@ model Usage {
   maxOnlineBookingAllowed  Int?
 
   // Usage tracking
+  maxPhotosUsed            Int @default(0)
   monthlyPhotoUploadsUsed  Int @default(0)
   onlineBookingsUsed       Int @default(0)
 

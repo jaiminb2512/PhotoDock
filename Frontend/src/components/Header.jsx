@@ -30,9 +30,9 @@ const Header = ({ shadow }) => {
         <Box component="header" sx={{
             py: 3,
             px: { xs: 2, md: 6 },
-            display: 'flex',
+            display: 'grid',
+            gridTemplateColumns: '1fr auto 1fr',
             alignItems: 'center',
-            justifyContent: 'space-between',
             borderBottom: shadow ? 'none' : colors.border.light,
             boxShadow: shadow ? '0 4px 20px rgba(0,0,0,0.08)' : 'none',
             bgcolor: colors.white,
@@ -44,7 +44,7 @@ const Header = ({ shadow }) => {
             right: 0,
             zIndex: 1100
         }}>
-            <Box sx={{ display: 'flex', gap: 3 }}>
+            <Box sx={{ display: 'flex', gap: 3, alignItems: 'center' }}>
                 {[
                     ...(user?.role === 'ADMIN' ? [
                         { label: 'USER', path: '/admin/user-create' },
@@ -78,7 +78,7 @@ const Header = ({ shadow }) => {
                 ))}
             </Box>
 
-            <Box sx={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => navigate('/')}>
+            <Box sx={{ textAlign: 'center', cursor: 'pointer', px: 2 }} onClick={() => navigate('/')}>
                 <Typography variant="h4" sx={{ fontWeight: 500, letterSpacing: '0.05em', lineHeight: 1.1 }}>
                     {user?.fullName || urlProjectName || 'Maulik Doshi'}
                 </Typography>
@@ -87,7 +87,7 @@ const Header = ({ shadow }) => {
                 </Typography>
             </Box>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'flex-end' }}>
                 {user ? (
                     <>
                         <Typography sx={{ fontSize: '0.9rem', mr: 1 }}>{user.fullName}</Typography>

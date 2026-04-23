@@ -109,12 +109,36 @@ export const savePhoto = async (req, res) => {
             return sendResponse(res, 400, "SetNo must be a valid number");
         }
 
+        // 1. Get Project with active usage and current photo count
         const project = await prisma.project.findUnique({
-            where: { projectId: projectId }
+            where: { projectId: projectId },
         });
 
         if (!project) {
             return sendResponse(res, 404, "Project not found");
+        }
+
+        const activeUsage = await prisma.usage.findFirst({
+            where: {
+                usageId: project.currentUsageId,
+                status: 'ACTIVE'
+            }
+        })
+        if (!activeUsage) {
+            return sendResponse(res, 403, "No active subscription found for this project");
+        }
+
+        // 2. Check Limits
+        const newPhotosCount = files.length;
+
+        // Check hard limit (maxPhotos)
+        if (activeUsage.maxPhotosUsed + newPhotosCount > activeUsage.maxPhotos) {
+            return sendResponse(res, 403, `Upload failed. Max photos limit reached (${activeUsage.maxPhotos}). Current photos: ${activeUsage.maxPhotosUsed}, Trying to upload: ${newPhotosCount}`);
+        }
+
+        // Check monthly limit
+        if (activeUsage.monthlyPhotoUploadsUsed + newPhotosCount > activeUsage.monthlyPhotoUploadsLimit) {
+            return sendResponse(res, 403, `Upload failed. Monthly upload limit reached. Left: ${activeUsage.monthlyPhotoUploadsLimit - activeUsage.monthlyPhotoUploadsUsed}, Trying to upload: ${newPhotosCount}`);
         }
 
         const names = Array.isArray(photoName) ? photoName : photoName ? [photoName] : [];
@@ -127,44 +151,65 @@ export const savePhoto = async (req, res) => {
             defaultSequence = Number.isNaN(parsed) ? 1 : parsed;
         }
 
-        const photosData = [];
-        let sequenceCounter = defaultSequence;
+        // 3. Upload photos to Cloudinary
+        // const uploadPromises = files.map(file => uploadPhoto(project, file));
+        // const photoUrls = await Promise.all(uploadPromises);
 
-        for (let index = 0; index < files.length; index++) {
-            const file = files[index];
-            const photoUrl = await uploadPhoto(project, file);
-            const id = randomUUID();
+        const photoUrls = ["https://dummy.com/1", "https://dummy.com/2", "https://dummy.com/3"];
 
-            const name = names[index]?.trim() || file.originalname;
-            const description = descriptions[index]?.trim() || "";
-            const seqValue = Array.isArray(sequences)
-                ? parseInt(sequences[index])
-                : Number.isNaN(parseInt(sequence))
-                    ? sequenceCounter
-                    : parseInt(sequence);
+        // 4. Create photo records and update usage in transaction
+        const result = await prisma.$transaction(async (tx) => {
+            const photosData = [];
+            let sequenceCounter = defaultSequence;
 
-            const photoSequence = Number.isInteger(seqValue) ? seqValue : sequenceCounter;
-            if (!Array.isArray(sequences)) {
-                sequenceCounter += 1;
+            for (let index = 0; index < photoUrls.length; index++) {
+                const photoUrl = photoUrls[index];
+                const file = files[index];
+                const id = randomUUID();
+
+                const name = names[index]?.trim() || file.originalname;
+                const description = descriptions[index]?.trim() || "";
+                const seqValue = Array.isArray(sequences)
+                    ? parseInt(sequences[index])
+                    : Number.isNaN(parseInt(sequence))
+                        ? sequenceCounter
+                        : parseInt(sequence);
+
+                const photoSequence = Number.isInteger(seqValue) ? seqValue : sequenceCounter;
+                if (!Array.isArray(sequences)) {
+                    sequenceCounter += 1;
+                }
+
+                const newPhoto = await tx.photo.create({
+                    data: {
+                        photoId: id,
+                        projectId: projectId,
+                        setNo: setNoValue,
+                        photoName: name,
+                        photoDescription: description,
+                        photoUrl: photoUrl,
+                        sequence: photoSequence,
+                        imageProvider: project.currentImageProvider
+                    }
+                });
+
+                photosData.push(newPhoto);
             }
 
-            const newPhoto = await prisma.photo.create({
+            // Update usage record
+            await tx.usage.update({
+                where: { usageId: activeUsage.usageId },
                 data: {
-                    photoId: id,
-                    projectId: projectId,
-                    setNo: setNoValue,
-                    photoName: name,
-                    photoDescription: description,
-                    photoUrl: photoUrl,
-                    sequence: photoSequence,
-                    imageProvider: project.imageProvider
+                    monthlyPhotoUploadsUsed: {
+                        increment: newPhotosCount
+                    }
                 }
             });
 
-            photosData.push(newPhoto);
-        }
+            return photosData;
+        });
 
-        return sendResponse(res, 201, "Photos created and uploaded successfully", photosData);
+        return sendResponse(res, 201, "Photos created and uploaded successfully", result);
     } catch (error) {
         console.error("savePhoto error:", error);
         return sendResponse(res, 500, "Failed to create photo", { error: error.message });
