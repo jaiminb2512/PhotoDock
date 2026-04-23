@@ -9,9 +9,9 @@ import BookOnlinePage from './pages/BookOnlinePage.jsx'
 import UserCreate from './pages/UserCreate.jsx'
 import SubscriptionPlansPage from './pages/SubscriptionPlansPage.jsx'
 import AdminProjectsPage from './pages/AdminProjectsPage.jsx'
+import AdminUsagePage from './pages/AdminUsagePage.jsx'
 import UserDashboard from './pages/UserDashboard.jsx'
 import { lightTheme, darkTheme } from './styles/theme'
-import authService from './services/authService'
 import RoleRoute from './components/RoleRoute.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import './App.css'
@@ -67,6 +67,7 @@ function AppContent() {
             <Route path="/admin/user-create" element={<UserCreate />} />
             <Route path="/admin/subscription-plans" element={<SubscriptionPlansPage />} />
             <Route path="/admin/projects" element={<AdminProjectsPage />} />
+            <Route path="/admin/usage/:projectId" element={<AdminUsagePage />} />
           </Route>
         </Routes>
       </Box>

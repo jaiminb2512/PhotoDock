@@ -7,7 +7,12 @@ import bcrypt from "bcryptjs";
 export const getAllProject = async (req, res) => {
     try {
         const projects = await prisma.project.findMany({
-            include: {
+            select: {
+                projectId: true,
+                projectName: true,
+                currentUsageId: true,
+                planEndDate: true,
+                createdAt: true,
                 user: {
                     select: {
                         userId: true,
@@ -17,28 +22,93 @@ export const getAllProject = async (req, res) => {
                 },
                 usages: {
                     where: { status: 'ACTIVE' },
-                    include: {
+                    select: {
                         plan: {
                             select: {
+                                planId: true,
                                 planName: true,
-                                billingCycle: true,
                                 price: true
                             }
                         }
                     },
                     take: 1
-                },
-                _count: {
-                    select: { photos: true }
                 }
             },
             orderBy: { createdAt: 'desc' }
         });
 
-        return sendResponse(res, 200, "Projects retrieved successfully", projects);
+        // Map to match the desired flat structure for "plan"
+        const transformedProjects = projects.map(p => ({
+            projectId: p.projectId,
+            projectName: p.projectName,
+            projectDescription: p.projectDescription,
+            currentUsageId: p.currentUsageId,
+            planEndDate: p.planEndDate,
+            createdAt: p.createdAt,
+            user: p.user,
+            plan: p.usages[0]?.plan || null
+        }));
+
+        return sendResponse(res, 200, "Projects retrieved successfully", transformedProjects);
     } catch (error) {
         console.error("getAllProject error:", error);
         return sendResponse(res, 500, "Failed to retrieve projects", { error: error.message });
+    }
+};
+
+// Get detailed usage stats for a project with pagination
+export const getProjectUsage = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        if (!projectId) {
+            return sendResponse(res, 400, "projectId is required");
+        }
+
+        const [usages, totalCount] = await Promise.all([
+            prisma.usage.findMany({
+                where: { projectId: projectId },
+                include: {
+                    plan: {
+                        select: {
+                            planName: true,
+                            billingCycle: true,
+                            price: true
+                        }
+                    },
+                    project: {
+                        select: {
+                            projectName: true,
+                            _count: {
+                                select: { photos: true }
+                            }
+                        }
+                    }
+                },
+                orderBy: { createdAt: 'desc' },
+                skip: skip,
+                take: limit
+            }),
+            prisma.usage.count({
+                where: { projectId: projectId }
+            })
+        ]);
+
+        return sendResponse(res, 200, "Project usage history retrieved successfully", {
+            usages,
+            pagination: {
+                totalCount,
+                totalPages: Math.ceil(totalCount / limit),
+                currentPage: page,
+                limit
+            }
+        });
+    } catch (error) {
+        console.error("getProjectUsage error:", error);
+        return sendResponse(res, 500, "Failed to retrieve project usage history", { error: error.message });
     }
 };
 

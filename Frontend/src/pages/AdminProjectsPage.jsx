@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Container,
     Box,
@@ -24,7 +25,8 @@ import {
     DialogActions,
     Grid,
     Divider,
-    MenuItem
+    MenuItem,
+    TablePagination
 } from '@mui/material';
 import {
     Visibility as ViewIcon,
@@ -34,13 +36,16 @@ import {
     FilterList as FilterIcon,
     Email as EmailIcon,
     Person as PersonIcon,
-    Image as ImageIcon
+    Image as ImageIcon,
+    Assessment as UsageIcon,
+    History as HistoryIcon
 } from '@mui/icons-material';
 import Header from '../components/Header';
 import colors from '../styles/colors';
 import api, { API_ENDPOINTS, getApiUrl } from '../utils/api';
 
 const AdminProjectsPage = () => {
+    const navigate = useNavigate();
     const [projects, setProjects] = useState([]);
     const [plans, setPlans] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -90,6 +95,10 @@ const AdminProjectsPage = () => {
         fetchPlans();
     }, []);
 
+    const handleOpenUsage = (project) => {
+        navigate(`/admin/usage/${project.projectId}`);
+    };
+
     const handleViewDetails = (project) => {
         setSelectedProject(project);
         setDetailsOpen(true);
@@ -106,7 +115,7 @@ const AdminProjectsPage = () => {
             twitterUrl: project.twitterUrl || '',
             instagramUrl: project.instagramUrl || '',
             facebookUrl: project.facebookUrl || '',
-            planId: project.usages?.[0]?.planId || ''
+            planId: project.plan?.planId || ''
         });
         setEditOpen(true);
     };
@@ -143,7 +152,7 @@ const AdminProjectsPage = () => {
             {/* Spacer for fixed header */}
             <Box sx={{ height: { xs: '80px', md: '100px' } }} />
 
-            <Container maxWidth="lg" sx={{ mt: 2, mb: 10, flexGrow: 1 }}>
+            <Container maxWidth="3xl" sx={{ mt: 2, mb: 10, flexGrow: 1 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 5 }}>
                     <Box>
                         <Typography variant="h3" sx={{
@@ -218,14 +227,15 @@ const AdminProjectsPage = () => {
                                     <TableCell sx={{ fontWeight: 700, color: colors.text.medium, py: 3 }}>Photographer</TableCell>
                                     <TableCell sx={{ fontWeight: 700, color: colors.text.medium }}>Project Name</TableCell>
                                     <TableCell sx={{ fontWeight: 700, color: colors.text.medium }}>Subscription</TableCell>
-                                    <TableCell sx={{ fontWeight: 700, color: colors.text.medium }}>Photos</TableCell>
                                     <TableCell sx={{ fontWeight: 700, color: colors.text.medium }}>Created At</TableCell>
+                                    <TableCell sx={{ fontWeight: 700, color: colors.text.medium }}>Plan End Date</TableCell>
                                     <TableCell sx={{ fontWeight: 700, color: colors.text.medium }} align="right">Actions</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {filteredProjects.map((project) => {
-                                    const activeUsage = project.usages?.[0];
+                                    const plan = project.plan;
+                                    const planEndDate = project.planEndDate;
                                     return (
                                         <TableRow key={project.projectId} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                             <TableCell>
@@ -243,9 +253,9 @@ const AdminProjectsPage = () => {
                                                 <Typography variant="body2" fontWeight={500}>{project.projectName}</Typography>
                                             </TableCell>
                                             <TableCell>
-                                                {activeUsage ? (
+                                                {plan ? (
                                                     <Chip
-                                                        label={activeUsage.plan.planName}
+                                                        label={plan.planName}
                                                         size="small"
                                                         sx={{
                                                             fontWeight: 600,
@@ -259,14 +269,13 @@ const AdminProjectsPage = () => {
                                                 )}
                                             </TableCell>
                                             <TableCell>
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                                    <ImageIcon sx={{ fontSize: '1rem', color: colors.text.muted }} />
-                                                    <Typography variant="body2">{project._count.photos}</Typography>
-                                                </Box>
+                                                <Typography variant="body2" color="text.secondary">
+                                                    {new Date(project.createdAt).toLocaleDateString()}
+                                                </Typography>
                                             </TableCell>
                                             <TableCell>
                                                 <Typography variant="body2" color="text.secondary">
-                                                    {new Date(project.createdAt).toLocaleDateString()}
+                                                    {new Date(project.planEndDate).toLocaleDateString()}
                                                 </Typography>
                                             </TableCell>
                                             <TableCell align="right">
@@ -279,8 +288,16 @@ const AdminProjectsPage = () => {
                                                             <ViewIcon />
                                                         </IconButton>
                                                     </Tooltip>
-                                                    <Tooltip title="Edit Project & Plan">
+                                                    <Tooltip title="Check Usage History">
                                                         <IconButton 
+                                                            onClick={() => handleOpenUsage(project)}
+                                                            sx={{ color: colors.text.medium }}
+                                                        >
+                                                            <UsageIcon />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    <Tooltip title="Edit Project & Plan">
+                                                        <IconButton
                                                             onClick={() => handleOpenEdit(project)}
                                                             sx={{ color: colors.text.medium }}
                                                         >
@@ -349,19 +366,19 @@ const AdminProjectsPage = () => {
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                                             <Typography variant="body2" color="text.secondary">Current Plan:</Typography>
                                             <Typography variant="body2" fontWeight={600}>
-                                                {selectedProject.usages?.[0]?.plan.planName || 'N/A'}
+                                                {selectedProject.plan?.planName || 'N/A'}
                                             </Typography>
                                         </Box>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <Typography variant="body2" color="text.secondary">Usage Photos:</Typography>
+                                            <Typography variant="body2" color="text.secondary">Billing Cycle:</Typography>
                                             <Typography variant="body2" fontWeight={600}>
-                                                {selectedProject._count.photos} / {selectedProject.usages?.[0]?.maxPhotos || '∞'}
+                                                {selectedProject.plan?.billingCycle || 'N/A'}
                                             </Typography>
                                         </Box>
                                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                                            <Typography variant="body2" color="text.secondary">Monthly Limit:</Typography>
+                                            <Typography variant="body2" color="text.secondary">Total Photos:</Typography>
                                             <Typography variant="body2" fontWeight={600}>
-                                                {selectedProject.usages?.[0]?.monthlyPhotoUploadsLimit || 'N/A'}
+                                                {selectedProject._count?.photos || 0}
                                             </Typography>
                                         </Box>
                                     </Box>
@@ -414,8 +431,8 @@ export default AdminProjectsPage;
 // Edit Project & Plan Dialog
 // (This is usually better as a separate component, but I'll add the state-driven Dialog here)
 const EditProjectDialog = ({ open, onClose, isSaving, editFormData, handleEditChange, handleSaveEdit, plans }) => (
-    <Dialog 
-        open={open} 
+    <Dialog
+        open={open}
         onClose={() => !isSaving && onClose()}
         maxWidth="md"
         fullWidth
@@ -534,19 +551,19 @@ const EditProjectDialog = ({ open, onClose, isSaving, editFormData, handleEditCh
             </Grid>
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
-            <Button 
+            <Button
                 onClick={onClose}
                 disabled={isSaving}
             >
                 Cancel
             </Button>
-            <Button 
+            <Button
                 onClick={handleSaveEdit}
                 variant="contained"
                 disabled={isSaving}
                 startIcon={isSaving && <CircularProgress size={20} color="inherit" />}
-                sx={{ 
-                    borderRadius: '12px', 
+                sx={{
+                    borderRadius: '12px',
                     textTransform: 'none',
                     px: 4,
                     bgcolor: colors.accent.primary,
@@ -558,3 +575,4 @@ const EditProjectDialog = ({ open, onClose, isSaving, editFormData, handleEditCh
         </DialogActions>
     </Dialog>
 );
+
